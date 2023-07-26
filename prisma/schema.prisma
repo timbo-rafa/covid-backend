@@ -13,10 +13,19 @@ datasource db {
 model Continent {
   id Int @id @default(autoincrement())
   name String
+
+  countries Country[] @relation("continent_of_country")
+
+  @@map("continent")
 }
 
 model Country {
    id Int @id @default(autoincrement())
-   iso_code String @db.Char(3)
+   isoCode String @db.Char(3) @map("iso_code") @unique
    name String @db.VarChar(80)
+   continentId Int @map("continent_id")
+
+   continent Continent @relation("continent_of_country", fields:[continentId], references: [id])
+
+   @@map("country")
 }
