@@ -1,9 +1,6 @@
 -- CreateTable
-CREATE TABLE "country_covid_data" (
-    "country_id" INTEGER NULL,
-    "iso_code" CHAR(3) NOT NULL,
-    "continent" VARCHAR(50),
-    "location" VARCHAR(50),
+CREATE TABLE "continent_covid_data" (
+    "continent_id" INTEGER NOT NULL,
     "date" DATE NOT NULL,
     "total_cases" BIGINT,
     "new_cases" INTEGER,
@@ -69,3 +66,9 @@ CREATE TABLE "country_covid_data" (
     "excess_mortality" REAL,
     "excess_mortality_cumulative_per_million" REAL
 );
+
+-- CreateIndex
+CREATE UNIQUE INDEX "continent_covid_data_continent_id_date_key" ON "continent_covid_data"("continent_id", "date");
+
+-- AddForeignKey
+ALTER TABLE "continent_covid_data" ADD CONSTRAINT "continent_covid_data_continent_id_fkey" FOREIGN KEY ("continent_id") REFERENCES "continent"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
