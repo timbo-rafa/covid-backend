@@ -12,6 +12,8 @@ model Continent {
   name      String
   countries Country[] @relation("continent_of_country")
 
+  // covidData OwidCovidByContinent @relation("continent_of_covid_data")
+
   @@map("continent")
 }
 
@@ -22,14 +24,88 @@ model Country {
   continentId Int       @map("continent_id")
   continent   Continent @relation("continent_of_country", fields: [continentId], references: [id])
 
-  covidData OwidCovidData[] @relation("country_of_ocd")
+  covidData CountryCovidData[] @relation("country_of_covid_data")
 
   @@map("country")
 }
 
-model OwidCovidData {
+model CountryCovidData {
   countryId                             Int      @map("country_id")
-  isoCode                               String   @map("iso_code") @db.Char(3)
+  //isoCode                               String   @map("iso_code") @db.Char(3)
+  //continent                             String?   @map("continent") @db.VarChar(50)
+  // location                              String?   @map("location") @db.VarChar(50)
+  date                                  DateTime @map("date") @db.Date
+  totalCases                            Int?      @map("total_cases")
+  newCases                              Int?      @map("new_cases")
+  newCasesSmoothed                      Float?    @map("new_cases_smoothed") @db.Real
+  totalDeaths                           Int?      @map("total_deaths")
+  newDeaths                             Int?      @map("new_deaths")
+  newDeathsSmoothed                     Float?    @map("new_deaths_smoothed") @db.Real
+  totalCasesPerMillion                  Float?    @map("total_cases_per_million") @db.Real
+  newCasesPerMillion                    Float?    @map("new_cases_per_million") @db.Real
+  newCasesSmoothedPerMillion            Float?    @map("new_cases_smoothed_per_million") @db.Real
+  totalDeathsPerMillion                 Float?    @map("total_deaths_per_million") @db.Real
+  newDeathsPerMillion                   Float?    @map("new_deaths_per_million") @db.Real
+  newDeathsSmoothedPerMillion           Float?    @map("new_deaths_smoothed_per_million") @db.Real
+  reproductionRate                      Float?    @map("reproduction_rate") @db.Real
+  icuPatients                           Int?      @map("icu_patients")
+  icuPatientsPerMillion                 Float?    @map("icu_patients_per_million") @db.Real
+  hospPatients                          Int?      @map("hosp_patients")
+  hospPatientsPerMillion                Float?    @map("hosp_patients_per_million") @db.Real
+  weeklyIcuAdmissions                   Int?      @map("weekly_icu_admissions")
+  weeklyIcuAdmissionsPerMillion         Float?    @map("weekly_icu_admissions_per_million") @db.Real
+  weeklyHospAdmissions                  Int?      @map("weekly_hosp_admissions")
+  weeklyHospAdmissionsPerMillion        Float?    @map("weekly_hosp_admissions_per_million") @db.Real
+  totalTests                            BigInt?      @map("total_tests")
+  newTests                              Int?      @map("new_tests")
+  totalTestsPerThousand                 Float?    @map("total_tests_per_thousand") @db.Real
+  newTestsPerThousand                   Float?    @map("new_tests_per_thousand") @db.Real
+  newTestsSmoothed                      Float?    @map("new_tests_smoothed") @db.Real
+  newTestsSmoothedPerThousand           Float?    @map("new_tests_smoothed_per_thousand") @db.Real
+  positiveRate                          Float?    @map("positive_rate") @db.Real
+  testsPerCase                          Float?    @map("tests_per_case") @db.Real
+  testsUnits                            String?   @map("tests_units") @db.VarChar(50)
+  totalVaccinations                     BigInt?      @map("total_vaccinations")
+  peopleVaccinated                      BigInt?      @map("people_vaccinated")
+  peopleFullyVaccinated                 BigInt?      @map("people_fully_vaccinated")
+  totalBoosters                         BigInt?      @map("total_boosters")
+  newVaccinations                       Int?      @map("new_vaccinations")
+  newVaccinationsSmoothed               Float?    @map("new_vaccinations_smoothed") @db.Real
+  totalVaccinationsPerHundred           Float?    @map("total_vaccinations_per_hundred") @db.Real
+  peopleVaccinatedPerHundred            Float?    @map("people_vaccinated_per_hundred") @db.Real
+  peopleFullyVaccinatedPerHundred       Float?    @map("people_fully_vaccinated_per_hundred") @db.Real
+  totalBoostersPerHundred               Float?    @map("total_boosters_per_hundred") @db.Real
+  newVaccinationsSmoothedPerMillion     Float?    @map("new_vaccinations_smoothed_per_million") @db.Real
+  newPeopleVaccinatedSmoothed           Float?    @map("new_people_vaccinated_smoothed") @db.Real
+  newPeopleVaccinatedSmoothedPerHundred Float?    @map("new_people_vaccinated_smoothed_per_hundred") @db.Real
+  stringencyIndex                       Float?    @map("stringency_index") @db.Real
+  populationDensity                     Float?    @map("population_density") @db.Real
+  medianAge                             Float?    @map("median_age") @db.Real
+  aged65Older                           Float?    @map("aged_65_older") @db.Real
+  aged70Older                           Float?    @map("aged_70_older") @db.Real
+  gdpPerCapita                          Float?    @map("gdp_per_capita") @db.Real
+  extremePoverty                        Float?    @map("extreme_poverty") @db.Real
+  cardiovascDeathRate                   Float?    @map("cardiovasc_death_rate") @db.Real
+  diabetesPrevalence                    Float?    @map("diabetes_prevalence") @db.Real
+  femaleSmokers                         Float?    @map("female_smokers") @db.Real
+  maleSmokers                           Float?    @map("male_smokers") @db.Real
+  handwashingFacilities                 Float?    @map("handwashing_facilities") @db.Real
+  hospitalBedsPerThousand               Float?    @map("hospital_beds_per_thousand") @db.Real
+  lifeExpectancy                        Float?    @map("life_expectancy") @db.Real
+  humanDevelopmentIndex                 Float?    @map("human_development_index") @db.Real
+  population                            BigInt?    @map("population")
+  excessMortalityCumulativeAbsolute     Float?    @map("excess_mortality_cumulative_absolute") @db.Real
+  excessMortalityCumulative             Float?    @map("excess_mortality_cumulative") @db.Real
+  excessMortality                       Float?    @map("excess_mortality") @db.Real
+  excessMortalityCumulativePerMillion   Float?    @map("excess_mortality_cumulative_per_million") @db.Real
+
+  country Country @relation("country_of_covid_data", fields: [countryId], references: [id])
+  @@unique([countryId, date])
+  @@map("country_covid_data")
+}
+
+model continent_covid_data {
+  continent_id                             Int?      @map("continent_id")
   continent                             String?   @map("continent") @db.VarChar(50)
   location                              String?   @map("location") @db.VarChar(50)
   date                                  DateTime @map("date") @db.Date
@@ -97,6 +173,8 @@ model OwidCovidData {
   excessMortality                       Float?    @map("excess_mortality") @db.Real
   excessMortalityCumulativePerMillion   Float?    @map("excess_mortality_cumulative_per_million") @db.Real
 
-  country Country? @relation("country_of_ocd", fields: [countryId], references: [id])
-  @@unique([countryId, date])
+  // continent Continent? @relation("continent_of_covid_data", fields: [continentId], references: [id])
+  //@@unique([continentId, date])
+  @@ignore
+  @@map("continent_covid_data")
 }

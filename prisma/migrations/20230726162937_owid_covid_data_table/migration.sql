@@ -1,6 +1,6 @@
 -- CreateTable
-CREATE TABLE "OwidCovidData" (
-    "country_id" INTEGER NOT NULL,
+CREATE TABLE "country_covid_data" (
+    "country_id" INTEGER NULL,
     "iso_code" CHAR(3) NOT NULL,
     "continent" VARCHAR(50),
     "location" VARCHAR(50),
@@ -26,7 +26,7 @@ CREATE TABLE "OwidCovidData" (
     "weekly_icu_admissions_per_million" REAL,
     "weekly_hosp_admissions" INTEGER,
     "weekly_hosp_admissions_per_million" REAL,
-    "total_tests" INTEGER,
+    "total_tests" BIGINT,
     "new_tests" INTEGER,
     "total_tests_per_thousand" REAL,
     "new_tests_per_thousand" REAL,
@@ -35,10 +35,10 @@ CREATE TABLE "OwidCovidData" (
     "positive_rate" REAL,
     "tests_per_case" REAL,
     "tests_units" VARCHAR(50),
-    "total_vaccinations" INTEGER,
-    "people_vaccinated" INTEGER,
-    "people_fully_vaccinated" INTEGER,
-    "total_boosters" INTEGER,
+    "total_vaccinations" BIGINT,
+    "people_vaccinated" BIGINT,
+    "people_fully_vaccinated" BIGINT,
+    "total_boosters" BIGINT,
     "new_vaccinations" INTEGER,
     "new_vaccinations_smoothed" REAL,
     "total_vaccinations_per_hundred" REAL,
@@ -63,15 +63,9 @@ CREATE TABLE "OwidCovidData" (
     "hospital_beds_per_thousand" REAL,
     "life_expectancy" REAL,
     "human_development_index" REAL,
-    "population" REAL,
+    "population" BIGINT,
     "excess_mortality_cumulative_absolute" REAL,
     "excess_mortality_cumulative" REAL,
     "excess_mortality" REAL,
     "excess_mortality_cumulative_per_million" REAL
 );
-
--- CreateIndex
-CREATE UNIQUE INDEX "OwidCovidData_country_id_date_key" ON "OwidCovidData"("country_id", "date");
-
--- AddForeignKey
-ALTER TABLE "OwidCovidData" ADD CONSTRAINT "OwidCovidData_country_id_fkey" FOREIGN KEY ("country_id") REFERENCES "country"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
