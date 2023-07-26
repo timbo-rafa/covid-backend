@@ -1,1 +1,0 @@
-export * from './covid-data.module'

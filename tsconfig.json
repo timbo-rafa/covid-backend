@@ -20,6 +20,9 @@
     "paths": {
       "@data-layer": [
         "src/data-layer/index"
+      ],
+      "@country-covid": [
+        "src/country-covid/index"
       ]
     }
   }

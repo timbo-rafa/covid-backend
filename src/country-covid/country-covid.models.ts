@@ -1,0 +1,1 @@
+export type CountryCovidFilter = { countryIds?: number[], dateRange?: { start?: Date, end?: Date } }
