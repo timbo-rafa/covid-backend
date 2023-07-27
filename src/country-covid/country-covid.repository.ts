@@ -17,7 +17,9 @@ export class CountryCovidRepository {
               gte: start,
               lt: end
             } : undefined
-          }
+          },
+          orderBy: [{date: 'desc'}],
+          take: 100
         }
       }
     })

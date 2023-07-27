@@ -6,7 +6,8 @@ import { CountryCovidRepository } from './country-covid.repository';
 
 @Module({
   imports: [DatabaseModule],
-  providers: [CountryCovidRepository, CountryCovidController, CountryCovidService],
-  exports: [CountryCovidController, CountryCovidService]
+  controllers: [CountryCovidController],
+  providers: [CountryCovidRepository, CountryCovidService],
+  exports: [CountryCovidService]
 })
 export class CountryCovidModule { }

@@ -8,12 +8,16 @@ import { DatabaseModule } from '@data-layer';
 @Module({
   imports: [
     DatabaseModule,
+    CountryCovidModule,
     RouterModule.register([{
-      path: 'country',
-      module: CountryCovidModule
-    }])
+      path: 'api',
+      children: [{
+        path: 'country',
+        module: CountryCovidModule
+      }]
+    }]),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }

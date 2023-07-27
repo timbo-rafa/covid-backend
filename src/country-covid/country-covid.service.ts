@@ -8,6 +8,7 @@ export class CountryCovidService {
 
 
   findByCountryAndTime(filters: CountryCovidFilter) {
+    console.log(filters)
     return this.countryCovidRepository.findByCountryAndTime(filters)
   }
 }

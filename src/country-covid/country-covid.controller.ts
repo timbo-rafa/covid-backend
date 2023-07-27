@@ -1,12 +1,16 @@
-import { Controller, Get, Param } from '@nestjs/common';
+import { Controller, Get, Query } from '@nestjs/common';
 import { CountryCovidService } from './country-covid.service';
+import { CountryCovidRequestQuery } from './country-covid.models';
+import { commaSeparatedStringToNumberArray } from '@utils';
 
-@Controller('')
+@Controller()
 export class CountryCovidController {
   constructor(private readonly countryCovidService: CountryCovidService) { }
 
   @Get('/query')
-  query(@Param('countryIds') countryIds: number[], @Param('start') start: Date, @Param('end') end: Date) {
-    return this.countryCovidService.findByCountryAndTime({countryIds, dateRange: {start, end}})
+  query(@Query() query: CountryCovidRequestQuery) {
+    const countryIds = query.countryIds ? commaSeparatedStringToNumberArray(query.countryIds) : undefined;
+    const { start, end } = query;
+    return this.countryCovidService.findByCountryAndTime({ countryIds, dateRange: { start, end } })
   }
 }
