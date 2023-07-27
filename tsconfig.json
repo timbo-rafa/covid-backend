@@ -21,8 +21,14 @@
       "@data-layer": [
         "src/data-layer/index"
       ],
+      "@continent-covid": [
+        "src/continent-covid/index"
+      ],
       "@country-covid": [
         "src/country-covid/index"
+      ],
+      "@utils": [
+        "src/utils/index"
       ]
     }
   }
