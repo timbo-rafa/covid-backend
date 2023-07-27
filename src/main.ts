@@ -6,3 +6,6 @@ async function bootstrap() {
   await app.listen(3000);
 }
 bootstrap();
+
+// @ts-ignore
+BigInt.prototype.toJSON = function () { return this.toString()};
