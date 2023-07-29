@@ -19,16 +19,19 @@
     "noFallthroughCasesInSwitch": false,
     "paths": {
       "@data-layer": [
-        "src/data-layer/index"
+        "src/data-layer"
       ],
       "@continent-covid": [
-        "src/continent-covid/index"
+        "src/continent-covid"
       ],
       "@country-covid": [
-        "src/country-covid/index"
+        "src/country-covid"
+      ],
+      "@owid-data-import": [
+        "src/integrations/owid"
       ],
       "@utils": [
-        "src/utils/index"
+        "src/utils"
       ]
     }
   }
