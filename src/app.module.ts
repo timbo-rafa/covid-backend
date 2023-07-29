@@ -14,11 +14,11 @@ import { DatabaseModule } from '@data-layer';
     RouterModule.register([{
       path: 'api',
       children: [{
-        path: 'country',
+        path: 'countries',
         module: CountryCovidModule
       },
       {
-        path: 'continent',
+        path: 'continents',
         module: ContinentCovidModule
       }],
     }]),
