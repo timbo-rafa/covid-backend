@@ -1,7 +1,7 @@
-import { Module } from '@nestjs/common';
+import { Module, ValidationPipe } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { RouterModule } from '@nestjs/core';
+import { APP_PIPE, RouterModule } from '@nestjs/core';
 import { CountryCovidModule } from '@country-covid';
 import { ContinentCovidModule } from '@continent-covid';
 import { DatabaseModule } from '@data-layer';
@@ -34,6 +34,8 @@ import { OwidDataImportModule } from '@owid-data-import';
     ]),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+  ],
 })
 export class AppModule {}

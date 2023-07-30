@@ -10,16 +10,16 @@ export class CountryCovidService {
     private readonly countryCovidRepository: CountryCovidRepository,
   ) {}
 
-  findByCountryAndTime(query: CountryCovidRequestQuery) {
+  async findByCountryAndTime(query: CountryCovidRequestQuery) {
     const countryIds = query.countryIds
       ? commaSeparatedStringToNumberArray(query.countryIds)
       : undefined;
     const { start, end } = query;
 
-    return this.countryCovidRepository.findByCountryAndTime({
+    const countryCovidData = await this.countryCovidRepository.findByCountryAndTime({
       countryIds,
       covidDataArgs: {
-        confirmedCovidCases: {
+        covidCases: {
           where: {
             date: PrismaDateRangeComparator.dateInsideRange({ start, end }),
           },
@@ -31,5 +31,6 @@ export class CountryCovidService {
         },
       },
     });
+    return countryCovidData;
   }
 }

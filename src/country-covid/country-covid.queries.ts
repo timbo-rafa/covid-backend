@@ -7,11 +7,11 @@ function applyDefault<T>(argValue: T | undefined, defaultValue: T) {
   return argValue !== undefined ? argValue : defaultValue;
 }
 
-function selectConfirmedCases<ExtArgs extends Args>(
-  args: Prisma.Country$confirmedCovidCasesArgs<ExtArgs>,
-  defaults?: Prisma.Country$confirmedCovidCasesArgs<ExtArgs>,
+function selectCovidCases<ExtArgs extends Args>(
+  args: Prisma.Country$covidCasesArgs<ExtArgs>,
+  defaults?: Prisma.Country$covidCasesArgs<ExtArgs>,
 ) {
-  return Prisma.validator<Prisma.Country$confirmedCovidCasesArgs>()({
+  return Prisma.validator<Prisma.Country$covidCasesArgs>()({
     where: {
       date: applyDefault(args.where?.date, defaults?.where?.date)
     },
@@ -26,7 +26,7 @@ function selectConfirmedCases<ExtArgs extends Args>(
   });
 }
 
-function selectConfirmedDeaths<ExtArgs extends Args>(
+function selectCovidDeaths<ExtArgs extends Args>(
   args: Prisma.ConfirmedCovidDeathsSelect<ExtArgs>,
   defaults?: Prisma.ConfirmedCovidDeathsSelect<ExtArgs>,
 ) {
@@ -34,7 +34,7 @@ function selectConfirmedDeaths<ExtArgs extends Args>(
 }
 
 export type CountryDbQueryArgs = {
-  confirmedCovidCases: ReturnType<typeof selectConfirmedCases>;
+  covidCases: ReturnType<typeof selectCovidCases>;
   // confirmedCovidDeaths:
   // covidHospitalizations:
   // covidTests:
@@ -44,10 +44,10 @@ export type CountryDbQueryArgs = {
 export function includeCovidDataInCountryQuery<ExtArgs extends Args>(args: CountryDbQueryArgs, defaults: CountryDbQueryArgs | undefined) {
   return Prisma.validator<Prisma.CountryFindManyArgs>()({
     include: {
-      confirmedCovidCases: {
-        ...selectConfirmedCases(
-          args.confirmedCovidCases,
-          defaults?.confirmedCovidCases,
+      covidCases: {
+        ...selectCovidCases(
+          args.covidCases,
+          defaults?.covidCases,
         ),
       },
       // date: applyDefault(args.select.date, defaults.select.date),

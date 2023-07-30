@@ -9,13 +9,9 @@ export class CountryCovidRepository {
 
   findByCountryAndTime({ countryIds, covidDataArgs, covidDataDefaults }: CountryCovidArgs) {
 
-    const queryArgs = includeCovidDataInCountryQuery(covidDataArgs, covidDataDefaults) 
-
-    console.log(JSON.stringify({countryIds,covidDataArgs, covidDataDefaults}))
-    console.log(JSON.stringify({queryArgs}))
+    const relationalCovidDataArgs = includeCovidDataInCountryQuery(covidDataArgs, covidDataDefaults)
     return this.prismaService.country.findMany({
       where: { id: { in: countryIds } },
-
       // covidData: {
       //   where: {
       //     date: PrismaComparator.dateInsideRange(dateRange)
@@ -23,7 +19,7 @@ export class CountryCovidRepository {
       //   orderBy: [{ date: 'desc' }],
       //   take: 100,
       // },
-      ...includeCovidDataInCountryQuery(covidDataArgs, covidDataDefaults),
+      ...relationalCovidDataArgs,
     });
   }
 }

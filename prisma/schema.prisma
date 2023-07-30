@@ -25,8 +25,8 @@ model Country {
   continent   Continent @relation("continent_of_country", fields: [continentId], references: [id])
 
   covidData             CountryCovidData[]      @relation("country_of_covid_data")
-  confirmedCovidCases   ConfirmedCovidCases[]   @relation("country_of_confirmed_covid_cases")
-  confirmedCovidDeaths  ConfirmedCovidDeaths[]  @relation("country_of_confirmed_covid_deaths")
+  covidCases            ConfirmedCovidCases[]   @relation("country_of_confirmed_covid_cases")
+  covidDeaths           ConfirmedCovidDeaths[]  @relation("country_of_confirmed_covid_deaths")
   covidHospitalizations CovidHospitalizations[] @relation("country_of_covid_hospitalizations")
   covidVaccinations     CovidVaccinations[]     @relation("country_of_covid_vaccinations")
   covidTests            CovidTests[]            @relation("country_of_covid_tests")
