@@ -1,15 +1,15 @@
-import { Injectable } from "@nestjs/common";
-import { stringYYYYMMDDToDate } from "@utils";
-import { csvColumnNumberByColumnName } from "../column-numbers";
-import { CovidTestsCreateModel } from "./covid-tests-import.models";
-import { CovidTestsImportRepository } from "./covid-tests-import.repository";
+import { Injectable } from '@nestjs/common';
+import { stringYYYYMMDDToDate } from '@utils';
+import { csvColumnNumberByColumnName } from '../column-numbers';
+import { CovidTestsCreateModel } from './covid-tests-import.models';
+import { CovidTestsImportRepository } from './covid-tests-import.repository';
 
 @Injectable()
 export class CovidTestsImportService {
-  constructor(private readonly covidTestsImportRepository: CovidTestsImportRepository) { }
+  constructor(private readonly covidTestsImportRepository: CovidTestsImportRepository) {}
 
   convertOwidDataRow(csvRow: string[], countryId: number): CovidTestsCreateModel {
-    const { date, totalTests, newTests, positiveRate, testsPerCase } = csvColumnNumberByColumnName
+    const { date, totalTests, newTests, positiveRate, testsPerCase } = csvColumnNumberByColumnName;
 
     return {
       countryId,
@@ -18,10 +18,10 @@ export class CovidTestsImportService {
       newTests: csvRow[newTests] !== undefined ? Number(csvRow[newTests]) : undefined,
       positiveRate: csvRow[positiveRate] !== undefined ? Number(csvRow[positiveRate]) : undefined,
       testsPerCase: csvRow[testsPerCase] !== undefined ? Number(csvRow[testsPerCase]) : undefined,
-    }
+    };
   }
 
   saveCovidTests(covidTests: CovidTestsCreateModel[]) {
-    return this.covidTestsImportRepository.saveCovidTests(covidTests)
+    return this.covidTestsImportRepository.saveCovidTests(covidTests);
   }
 }

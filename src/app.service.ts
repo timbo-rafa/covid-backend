@@ -9,6 +9,6 @@ export class AppService {
   }
 
   pingDatabase() {
-    return this.prismaService.$queryRaw<[{database: 'up'}]>`SELECT 'up' AS "database"`;
+    return this.prismaService.$queryRaw<[{ database: 'up' }]>`SELECT 'up' AS "database"`;
   }
 }

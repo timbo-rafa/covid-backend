@@ -1,1 +1,1 @@
-export type CountryIdByIso = Record<string, number>
+export type CountryIdByIso = Record<string, number>;

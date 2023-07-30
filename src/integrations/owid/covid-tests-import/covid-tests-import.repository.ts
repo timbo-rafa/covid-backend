@@ -1,6 +1,6 @@
-import { PrismaService } from "@data-layer";
-import { Injectable } from "@nestjs/common";
-import { CovidTestsCreateModel } from "./covid-tests-import.models";
+import { PrismaService } from '@data-layer';
+import { Injectable } from '@nestjs/common';
+import { CovidTestsCreateModel } from './covid-tests-import.models';
 
 @Injectable()
 export class CovidTestsImportRepository {
@@ -9,7 +9,7 @@ export class CovidTestsImportRepository {
   saveCovidTests(covidTests: CovidTestsCreateModel[]) {
     return this.prismaService.covidTests.createMany({
       data: covidTests,
-      skipDuplicates: true
-    })
+      skipDuplicates: true,
+    });
   }
 }

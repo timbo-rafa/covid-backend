@@ -8,6 +8,6 @@ import { ContinentCovidRepository } from './continent-covid.repository';
   imports: [DatabaseModule],
   controllers: [ContinentCovidController],
   providers: [ContinentCovidRepository, ContinentCovidService],
-  exports: [ContinentCovidService]
+  exports: [ContinentCovidService],
 })
-export class ContinentCovidModule { }
+export class ContinentCovidModule {}

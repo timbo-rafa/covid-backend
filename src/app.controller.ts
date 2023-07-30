@@ -5,10 +5,9 @@ import { AppService } from './app.service';
 export class AppController {
   constructor(private readonly appService: AppService) {}
 
-
   @Get('/ping-database')
   pingDatabase() {
-    return this.appService.pingDatabase()
+    return this.appService.pingDatabase();
   }
 
   @Get()

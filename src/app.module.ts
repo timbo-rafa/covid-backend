@@ -13,22 +13,27 @@ import { OwidDataImportModule } from '@owid-data-import';
     CountryCovidModule,
     ContinentCovidModule,
     OwidDataImportModule,
-    RouterModule.register([{
-      path: 'api',
-      children: [{
-        path: 'countries',
-        module: CountryCovidModule
-      },
+    RouterModule.register([
       {
-        path: 'continents',
-        module: ContinentCovidModule
-      }, {
-        path: 'owid',
-        module: OwidDataImportModule
-      }],
-    }]),
+        path: 'api',
+        children: [
+          {
+            path: 'countries',
+            module: CountryCovidModule,
+          },
+          {
+            path: 'continents',
+            module: ContinentCovidModule,
+          },
+          {
+            path: 'owid',
+            module: OwidDataImportModule,
+          },
+        ],
+      },
+    ]),
   ],
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule { }
+export class AppModule {}

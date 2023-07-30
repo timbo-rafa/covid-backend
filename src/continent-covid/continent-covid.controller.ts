@@ -5,12 +5,15 @@ import { commaSeparatedStringToNumberArray } from '@utils';
 
 @Controller()
 export class ContinentCovidController {
-  constructor(private readonly continentCovidService: ContinentCovidService) { }
+  constructor(private readonly continentCovidService: ContinentCovidService) {}
 
   @Get('/query')
   query(@Query() query: ContinentCovidRequestQuery) {
     const continentIds = query.continentIds ? commaSeparatedStringToNumberArray(query.continentIds) : undefined;
     const { start, end } = query;
-    return this.continentCovidService.findByContinentAndTime({ continentIds, dateRange: { start, end } })
+    return this.continentCovidService.findByContinentAndTime({
+      continentIds,
+      dateRange: { start, end },
+    });
   }
 }

@@ -1,6 +1,6 @@
-import { PrismaService } from "@data-layer";
-import { Injectable } from "@nestjs/common";
-import { ConfirmedCasesCreateModel } from "./confirmed-cases-import.models";
+import { PrismaService } from '@data-layer';
+import { Injectable } from '@nestjs/common';
+import { ConfirmedCasesCreateModel } from './confirmed-cases-import.models';
 
 @Injectable()
 export class ConfirmedCasesImportRepository {
@@ -9,7 +9,7 @@ export class ConfirmedCasesImportRepository {
   saveConfirmedCases(confirmedCases: ConfirmedCasesCreateModel[]) {
     return this.prismaService.confirmedCovidCases.createMany({
       data: confirmedCases,
-      skipDuplicates: true
-    })
+      skipDuplicates: true,
+    });
   }
 }

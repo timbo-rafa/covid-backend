@@ -1,6 +1,5 @@
-import { IsDate, IsOptional, Matches } from "class-validator"
-import { Type } from 'class-transformer'
-
+import { IsDate, IsOptional, Matches } from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class CountryCovidRequestQuery {
   @IsOptional()
@@ -10,14 +9,16 @@ export class CountryCovidRequestQuery {
   })
   countryIds?: string;
 
+  @IsOptional()
+  @IsDate()
+  start?: Date;
 
   @IsOptional()
   @IsDate()
-  start?: Date
-
-  @IsOptional()
-  @IsDate()
-  end?: Date
+  end?: Date;
 }
 
-export type CountryCovidFilter = { countryIds?: number[], dateRange?: { start?: Date, end?: Date } }
+export type CountryCovidFilter = {
+  countryIds?: number[];
+  dateRange?: { start?: Date; end?: Date };
+};

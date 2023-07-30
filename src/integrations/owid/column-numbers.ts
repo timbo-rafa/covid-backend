@@ -66,4 +66,4 @@ export const csvColumnNumberByColumnName = {
   excessMortalityCumulative: 64,
   excessMortality: 65,
   excessMortalityCumulativePerMillion: 66,
-}
+};

@@ -16,16 +16,13 @@ describe('AppController (e2e)', () => {
   });
 
   it('/dev (GET)', () => {
-    return request(app.getHttpServer())
-      .get('/dev')
-      .expect(200)
-      .expect('Hello World!');
+    return request(app.getHttpServer()).get('/dev').expect(200).expect('Hello World!');
   });
 
   it('/dev/ping-database', () => {
     return request(app.getHttpServer())
       .get('/dev/ping-database')
       .expect(200)
-      .expect([{database: 'up'}]);
+      .expect([{ database: 'up' }]);
   });
 });

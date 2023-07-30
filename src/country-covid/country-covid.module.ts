@@ -8,6 +8,6 @@ import { CountryCovidRepository } from './country-covid.repository';
   imports: [DatabaseModule],
   controllers: [CountryCovidController],
   providers: [CountryCovidRepository, CountryCovidService],
-  exports: [CountryCovidService]
+  exports: [CountryCovidService],
 })
-export class CountryCovidModule { }
+export class CountryCovidModule {}

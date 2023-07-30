@@ -1,2 +1,2 @@
-export * from './country-covid.module'
-export * from './country-covid.service'
+export * from './country-covid.module';
+export * from './country-covid.service';
