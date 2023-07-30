@@ -3,3 +3,8 @@ export function stringYYYYMMDDToDate(date: string) {
 
   return new Date(Date.UTC(Number(year), Number(month) - 1, Number(day)));
 }
+
+export type DateRange = {
+  start: Date,
+  end: Date
+}

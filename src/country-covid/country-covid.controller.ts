@@ -1,7 +1,6 @@
 import { Controller, Get, Query } from '@nestjs/common';
-import { CountryCovidService } from './country-covid.service';
 import { CountryCovidRequestQuery } from './country-covid.models';
-import { commaSeparatedStringToNumberArray } from '@utils';
+import { CountryCovidService } from './country-covid.service';
 
 @Controller()
 export class CountryCovidController {
@@ -9,11 +8,6 @@ export class CountryCovidController {
 
   @Get('/query')
   query(@Query() query: CountryCovidRequestQuery) {
-    const countryIds = query.countryIds ? commaSeparatedStringToNumberArray(query.countryIds) : undefined;
-    const { start, end } = query;
-    return this.countryCovidService.findByCountryAndTime({
-      countryIds,
-      dateRange: { start, end },
-    });
+    return this.countryCovidService.findByCountryAndTime(query);
   }
 }
