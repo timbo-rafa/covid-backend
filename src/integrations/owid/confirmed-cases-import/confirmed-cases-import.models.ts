@@ -1,6 +1,6 @@
-export type OwidConfirmedCasesCreateModel = {
+export type ConfirmedCasesCreateModel = {
   countryId: number
   date: Date 
-  newCases: number
-  totalCases: bigint | number
+  newCases?: number
+  totalCases?: bigint | number
 }

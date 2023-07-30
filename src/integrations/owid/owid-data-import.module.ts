@@ -4,6 +4,8 @@ import { ConfirmedCasesImportRepository } from './confirmed-cases-import/confirm
 import { ConfirmedCasesImportService } from './confirmed-cases-import/confirmed-cases-import.service';
 import { ConfirmedDeathsImportRepository } from './confirmed-deaths-import/confirmed-deaths-import.repository';
 import { ConfirmedDeathsImportService } from './confirmed-deaths-import/confirmed-deaths-import.service';
+import { HospitalizationsImportRepository } from './hospitalizations-import/hospitalizations-import.repository';
+import { HospitalizationsImportService } from './hospitalizations-import/hospitalizations-import.service';
 import { OwidDataImportController } from './owid-data-import.controller';
 import { OwidDataImportRepository } from './owid-data-import.repository';
 import { OwidDataImportService } from './owid-data-import.service';
@@ -14,7 +16,8 @@ import { OwidDataImportService } from './owid-data-import.service';
   controllers: [OwidDataImportController],
   providers: [OwidDataImportService, OwidDataImportRepository,
     ConfirmedCasesImportService, ConfirmedCasesImportRepository,
-    ConfirmedDeathsImportService, ConfirmedDeathsImportRepository
+    ConfirmedDeathsImportService, ConfirmedDeathsImportRepository,
+    HospitalizationsImportService, HospitalizationsImportRepository
   ],
   exports: [OwidDataImportService],
 })
