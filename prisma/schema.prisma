@@ -26,6 +26,7 @@ model Country {
 
   covidData CountryCovidData[] @relation("country_of_covid_data")
   confirmedCovidCases ConfirmedCovidCases[] @relation("country_of_confirmed_covid_cases")
+  confirmedCovidDeaths ConfirmedCovidDeaths[] @relation("country_of_confirmed_covid_deaths")
 
   @@map("country")
 }
@@ -33,13 +34,25 @@ model Country {
 model ConfirmedCovidCases {
   countryId Int      @map("country_id")
   date      DateTime @map("date") @db.Date
-  newCases  Int     @map("new_cases")
-  totalCases BigInt @map("total_cases")
+  newCases  Int?     @map("new_cases")
+  totalCases BigInt? @map("total_cases")
 
   country Country @relation("country_of_confirmed_covid_cases", fields: [countryId], references: [id])
 
   @@unique([countryId, date])
   @@map("confirmed_covid_cases")
+}
+
+model ConfirmedCovidDeaths {
+  countryId Int      @map("country_id")
+  date      DateTime @map("date") @db.Date
+  newDeaths  Int?     @map("new_deaths")
+  totalDeaths BigInt? @map("total_deaths")
+
+  country Country @relation("country_of_confirmed_covid_deaths", fields: [countryId], references: [id])
+
+  @@unique([countryId, date])
+  @@map("confirmed_covid_deaths")
 }
 
 model CountryCovidData {
