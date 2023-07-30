@@ -27,7 +27,9 @@ model Country {
   covidData             CountryCovidData[]      @relation("country_of_covid_data")
   confirmedCovidCases   ConfirmedCovidCases[]   @relation("country_of_confirmed_covid_cases")
   confirmedCovidDeaths  ConfirmedCovidDeaths[]  @relation("country_of_confirmed_covid_deaths")
-  covidHospitalizations CovidHospitalizations[]@relation("country_of_covid_hospitalizations")
+  covidHospitalizations CovidHospitalizations[] @relation("country_of_covid_hospitalizations")
+  covidVaccinations     CovidVaccinations[]     @relation("country_of_covid_vaccinations")
+  covidTests            CovidTests[]            @relation("country_of_covid_tests")
 
   @@map("country")
 }
@@ -67,7 +69,36 @@ model CovidHospitalizations {
   country Country @relation("country_of_covid_hospitalizations", fields: [countryId], references: [id])
 
   @@unique([countryId, date])
-  @@map("confirmed_covid_hospitalizations")
+  @@map("covid_hospitalizations")
+}
+
+model CovidVaccinations {
+  countryId             Int      @map("country_id")
+  date                  DateTime @map("date") @db.Date
+  totalVaccinations     BigInt?  @map("total_vaccinations")
+  peopleVaccinated      BigInt?  @map("people_vaccinated")
+  peopleFullyVaccinated BigInt?  @map("people_fully_vaccinated")
+  totalBoosters         BigInt?  @map("total_boosters")
+  newVaccinations       Int?     @map("new_vaccinations")
+
+  country Country @relation("country_of_covid_vaccinations", fields: [countryId], references: [id])
+
+  @@unique([countryId, date])
+  @@map("covid_vaccinations")
+}
+
+model CovidTests {
+  countryId    Int      @map("country_id")
+  date         DateTime @map("date") @db.Date
+  totalTests   BigInt?  @map("total_tests")
+  newTests     Int?     @map("new_tests")
+  positiveRate Float?   @map("positive_rate") @db.Real
+  testsPerCase Float?   @map("tests_per_case") @db.Real
+
+  country Country @relation("country_of_covid_tests", fields: [countryId], references: [id])
+
+  @@unique([countryId, date])
+  @@map("covid_tests")
 }
 
 model CountryCovidData {

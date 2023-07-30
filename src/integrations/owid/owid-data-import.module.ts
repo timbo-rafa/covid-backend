@@ -9,6 +9,8 @@ import { HospitalizationsImportService } from './hospitalizations-import/hospita
 import { OwidDataImportController } from './owid-data-import.controller';
 import { OwidDataImportRepository } from './owid-data-import.repository';
 import { OwidDataImportService } from './owid-data-import.service';
+import { VaccinationsImportRepository } from './vaccinations-import/vaccinations-import.repository';
+import { VaccinationsImportService } from './vaccinations-import/vaccinations-import.service';
 
 
 @Module({
@@ -17,7 +19,8 @@ import { OwidDataImportService } from './owid-data-import.service';
   providers: [OwidDataImportService, OwidDataImportRepository,
     ConfirmedCasesImportService, ConfirmedCasesImportRepository,
     ConfirmedDeathsImportService, ConfirmedDeathsImportRepository,
-    HospitalizationsImportService, HospitalizationsImportRepository
+    HospitalizationsImportService, HospitalizationsImportRepository,
+    VaccinationsImportService, VaccinationsImportRepository
   ],
   exports: [OwidDataImportService],
 })

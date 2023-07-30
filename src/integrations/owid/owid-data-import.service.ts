@@ -11,6 +11,8 @@ import { ConfirmedDeathsCreateModel } from './confirmed-deaths-import/confirmed-
 import { csvColumnNumberByColumnName } from './column-numbers';
 import { HospitalizationsImportService } from './hospitalizations-import/hospitalizations-import.service';
 import { HospitalizationsCreateModel } from './hospitalizations-import/hospitalizations-import.models';
+import { VaccinationsImportService } from './vaccinations-import/vaccinations-import.service';
+import { VaccinationsCreateModel } from './vaccinations-import/vaccinations-import.models';
 
 const SAVE_BATCH_SIZE = 20;
 
@@ -21,7 +23,8 @@ export class OwidDataImportService {
   constructor(private readonly owidDataImportRepository: OwidDataImportRepository,
     private readonly confirmedCasesImportService: ConfirmedCasesImportService,
     private readonly confirmedDeathsImportService: ConfirmedDeathsImportService,
-    private readonly hospitalizationsImportService: HospitalizationsImportService
+    private readonly hospitalizationsImportService: HospitalizationsImportService,
+    private readonly vaccinationsImportService: VaccinationsImportService
   ) { }
 
   async importOwidCsvData(csvUrl: string) {
@@ -31,6 +34,7 @@ export class OwidDataImportService {
     const confirmedCases: ConfirmedCasesCreateModel[] = []
     const confirmedDeaths: ConfirmedDeathsCreateModel[] = []
     const hospitalizations: HospitalizationsCreateModel[] = []
+    const vaccinations: VaccinationsCreateModel[] = []
 
     let parsedRows = 0;
 
@@ -55,17 +59,20 @@ export class OwidDataImportService {
           const hospitalizationsRow = this.hospitalizationsImportService.convertOwidDataRow(row, countryId)
           hospitalizations.push(hospitalizationsRow)
 
+          const vaccinationsRow = this.vaccinationsImportService.convertOwidDataRow(row, countryId);
+          vaccinations.push(vaccinationsRow)
+
           parsedRows++;
 
           if (parsedRows >= SAVE_BATCH_SIZE) {
-            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations)
+            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations)
             parsedRows = 0;
           }
         })
         .on('end', async () => {
           console.log('Response ended');
           if (parsedRows > 0) {
-            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations)
+            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations)
           }
         })
     }).on('error', err => {
@@ -73,7 +80,12 @@ export class OwidDataImportService {
     })
   }
 
-  private async commitParsedRows(confirmedCases: ConfirmedCasesCreateModel[], confirmedDeaths: ConfirmedDeathsCreateModel[], hospitalizations: HospitalizationsCreateModel[]) {
+  private async commitParsedRows(
+    confirmedCases: ConfirmedCasesCreateModel[],
+    confirmedDeaths: ConfirmedDeathsCreateModel[],
+    hospitalizations: HospitalizationsCreateModel[],
+    vaccinations: VaccinationsCreateModel[]
+    ) {
     const transaction: Prisma.PrismaPromise<Prisma.BatchPayload>[] = []
 
     if (confirmedCases.length) {
@@ -89,6 +101,11 @@ export class OwidDataImportService {
     if (hospitalizations.length) {
       transaction.push(
         this.hospitalizationsImportService.saveHospitalizations(hospitalizations)
+      )
+    }
+    if (vaccinations.length) {
+      transaction.push(
+        this.vaccinationsImportService.saveVaccinations(vaccinations)
       )
     }
 
