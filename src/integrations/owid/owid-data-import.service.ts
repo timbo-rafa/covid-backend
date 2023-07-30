@@ -13,6 +13,8 @@ import { HospitalizationsImportService } from './hospitalizations-import/hospita
 import { HospitalizationsCreateModel } from './hospitalizations-import/hospitalizations-import.models';
 import { VaccinationsImportService } from './vaccinations-import/vaccinations-import.service';
 import { VaccinationsCreateModel } from './vaccinations-import/vaccinations-import.models';
+import { CovidTestsCreateModel } from './covid-tests-import/covid-tests-import.models';
+import { CovidTestsImportService } from './covid-tests-import/covid-tests-import.service';
 
 const SAVE_BATCH_SIZE = 20;
 
@@ -24,7 +26,8 @@ export class OwidDataImportService {
     private readonly confirmedCasesImportService: ConfirmedCasesImportService,
     private readonly confirmedDeathsImportService: ConfirmedDeathsImportService,
     private readonly hospitalizationsImportService: HospitalizationsImportService,
-    private readonly vaccinationsImportService: VaccinationsImportService
+    private readonly vaccinationsImportService: VaccinationsImportService,
+    private readonly covidTestsImportService: CovidTestsImportService
   ) { }
 
   async importOwidCsvData(csvUrl: string) {
@@ -35,6 +38,7 @@ export class OwidDataImportService {
     const confirmedDeaths: ConfirmedDeathsCreateModel[] = []
     const hospitalizations: HospitalizationsCreateModel[] = []
     const vaccinations: VaccinationsCreateModel[] = []
+    const covidTests: CovidTestsCreateModel[] = []
 
     let parsedRows = 0;
 
@@ -45,7 +49,7 @@ export class OwidDataImportService {
 
           const countryId = this.getCountryIdFromIsoCode(row, countryIdByIso)
           if (countryId === undefined) {
-            const {isoCode} = csvColumnNumberByColumnName
+            const { isoCode } = csvColumnNumberByColumnName
             this.logger.warn(`iso code ${row[isoCode]} on incoming csv not found on database. Skipping...`);
             return
           }
@@ -62,17 +66,20 @@ export class OwidDataImportService {
           const vaccinationsRow = this.vaccinationsImportService.convertOwidDataRow(row, countryId);
           vaccinations.push(vaccinationsRow)
 
+          const covidTestsRow = this.covidTestsImportService.convertOwidDataRow(row, countryId);
+          covidTests.push(covidTestsRow)
+
           parsedRows++;
 
           if (parsedRows >= SAVE_BATCH_SIZE) {
-            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations)
+            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations, covidTests)
             parsedRows = 0;
           }
         })
         .on('end', async () => {
           console.log('Response ended');
           if (parsedRows > 0) {
-            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations)
+            await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations, covidTests)
           }
         })
     }).on('error', err => {
@@ -84,8 +91,9 @@ export class OwidDataImportService {
     confirmedCases: ConfirmedCasesCreateModel[],
     confirmedDeaths: ConfirmedDeathsCreateModel[],
     hospitalizations: HospitalizationsCreateModel[],
-    vaccinations: VaccinationsCreateModel[]
-    ) {
+    vaccinations: VaccinationsCreateModel[],
+    covidTests: CovidTestsCreateModel[]
+  ) {
     const transaction: Prisma.PrismaPromise<Prisma.BatchPayload>[] = []
 
     if (confirmedCases.length) {
@@ -106,6 +114,11 @@ export class OwidDataImportService {
     if (vaccinations.length) {
       transaction.push(
         this.vaccinationsImportService.saveVaccinations(vaccinations)
+      )
+    }
+    if (covidTests.length) {
+      transaction.push(
+        this.covidTestsImportService.saveCovidTests(covidTests)
       )
     }
 

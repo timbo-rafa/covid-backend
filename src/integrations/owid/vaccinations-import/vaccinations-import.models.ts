@@ -1,9 +1,9 @@
 export type VaccinationsCreateModel = {
   countryId: number
   date: Date
-  totalVaccinations?: number
-  peopleVaccinated?: number
-  peopleFullyVaccinated?: number
-  totalBoosters?: number
+  totalVaccinations?: bigint | number
+  peopleVaccinated?: bigint | number
+  peopleFullyVaccinated?: bigint | number
+  totalBoosters?: bigint | number
   newVaccinations?: number
 }

@@ -4,6 +4,8 @@ import { ConfirmedCasesImportRepository } from './confirmed-cases-import/confirm
 import { ConfirmedCasesImportService } from './confirmed-cases-import/confirmed-cases-import.service';
 import { ConfirmedDeathsImportRepository } from './confirmed-deaths-import/confirmed-deaths-import.repository';
 import { ConfirmedDeathsImportService } from './confirmed-deaths-import/confirmed-deaths-import.service';
+import { CovidTestsImportRepository } from './covid-tests-import/covid-tests-import.repository';
+import { CovidTestsImportService } from './covid-tests-import/covid-tests-import.service';
 import { HospitalizationsImportRepository } from './hospitalizations-import/hospitalizations-import.repository';
 import { HospitalizationsImportService } from './hospitalizations-import/hospitalizations-import.service';
 import { OwidDataImportController } from './owid-data-import.controller';
@@ -20,7 +22,8 @@ import { VaccinationsImportService } from './vaccinations-import/vaccinations-im
     ConfirmedCasesImportService, ConfirmedCasesImportRepository,
     ConfirmedDeathsImportService, ConfirmedDeathsImportRepository,
     HospitalizationsImportService, HospitalizationsImportRepository,
-    VaccinationsImportService, VaccinationsImportRepository
+    VaccinationsImportService, VaccinationsImportRepository,
+    CovidTestsImportService, CovidTestsImportRepository
   ],
   exports: [OwidDataImportService],
 })
