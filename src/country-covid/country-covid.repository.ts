@@ -1,5 +1,5 @@
+import { PrismaService } from '@data-layer';
 import { Injectable } from '@nestjs/common';
-import { PrismaDateRangeComparator, PrismaService } from '@data-layer';
 import { CountryCovidArgs } from './country-covid.models';
 import { includeCovidDataInCountryQuery } from './country-covid.queries';
 
@@ -8,6 +8,11 @@ export class CountryCovidRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   findByCountryAndTime({ countryIds, covidDataArgs, covidDataDefaults }: CountryCovidArgs) {
+
+    const queryArgs = includeCovidDataInCountryQuery(covidDataArgs, covidDataDefaults) 
+
+    console.log(JSON.stringify({countryIds,covidDataArgs, covidDataDefaults}))
+    console.log(JSON.stringify({queryArgs}))
     return this.prismaService.country.findMany({
       where: { id: { in: countryIds } },
 

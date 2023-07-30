@@ -13,14 +13,14 @@ function selectConfirmedCases<ExtArgs extends Args>(
 ) {
   return Prisma.validator<Prisma.Country$confirmedCovidCasesArgs>()({
     where: {
-      date: applyDefault(args.where.date, defaults.where.date)
+      date: applyDefault(args.where?.date, defaults?.where?.date)
     },
     select: {
-      date: applyDefault(args.select.date, defaults.select.date),
-      newCases: applyDefault(args.select.newCases, defaults.select.newCases),
+      date: applyDefault(args.select?.date, defaults?.select?.date),
+      newCases: applyDefault(args.select?.newCases, defaults?.select?.newCases),
       totalCases: applyDefault(
-        args.select.totalCases,
-        defaults.select.totalCases,
+        args.select?.totalCases,
+        defaults?.select?.totalCases,
       ),
     },
   });
@@ -47,7 +47,7 @@ export function includeCovidDataInCountryQuery<ExtArgs extends Args>(args: Count
       confirmedCovidCases: {
         ...selectConfirmedCases(
           args.confirmedCovidCases,
-          defaults.confirmedCovidCases,
+          defaults?.confirmedCovidCases,
         ),
       },
       // date: applyDefault(args.select.date, defaults.select.date),

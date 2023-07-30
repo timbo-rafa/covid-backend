@@ -7,8 +7,8 @@ export const PrismaDateRangeComparator = {
   ): Prisma.DateTimeFilter | undefined =>
     dateRange?.start || dateRange?.end
       ? {
-          gte: dateRange.start,
-          lt: dateRange.end,
+          gte: dateRange?.start,
+          lt: dateRange?.end,
         }
       : undefined,
 };

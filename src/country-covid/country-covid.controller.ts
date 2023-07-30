@@ -6,7 +6,7 @@ import { CountryCovidService } from './country-covid.service';
 export class CountryCovidController {
   constructor(private readonly countryCovidService: CountryCovidService) {}
 
-  @Get('/query')
+  @Get('/covid-data')
   query(@Query() query: CountryCovidRequestQuery) {
     return this.countryCovidService.findByCountryAndTime(query);
   }
