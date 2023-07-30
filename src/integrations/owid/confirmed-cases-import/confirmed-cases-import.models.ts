@@ -1,6 +1,6 @@
 export type OwidConfirmedCasesCreateModel = {
-  isoCode: string;
-  date: string;
-  newCases: string;
-  totalCases: string
+  countryId: number
+  date: Date 
+  newCases: number
+  totalCases: bigint | number
 }

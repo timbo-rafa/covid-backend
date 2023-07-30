@@ -1,4 +1,4 @@
-export const csvRowNumberByCountryIso = {
+export const csvColumnNumberByColumnName = {
   isoCode: 0,
   continent: 1,
   location: 2,

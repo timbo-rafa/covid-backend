@@ -6,7 +6,10 @@ import { OwidConfirmedCasesCreateModel } from "./confirmed-cases-import.models";
 export class ConfirmedCasesImportRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  confirmedCases(confirmedCases: OwidConfirmedCasesCreateModel[]) {
-    this.prismaService
+  saveConfirmedCases(confirmedCases: OwidConfirmedCasesCreateModel[]) {
+    return this.prismaService.confirmedCovidCases.createMany({
+      data: confirmedCases,
+      skipDuplicates: true
+    })
   }
 }
