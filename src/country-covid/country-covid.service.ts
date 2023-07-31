@@ -1,7 +1,6 @@
 import { PrismaDateRangeComparator } from '@data-layer';
 import { Injectable } from '@nestjs/common';
-import { commaSeparatedStringToNumberArray } from '@utils';
-import { CountryCovidRequestQuery } from './country-covid.models';
+import { CountryCovidServiceArgs } from './country-covid.models';
 import { CountryCovidRepository } from './country-covid.repository';
 
 @Injectable()
@@ -10,23 +9,20 @@ export class CountryCovidService {
     private readonly countryCovidRepository: CountryCovidRepository,
   ) {}
 
-  async findByCountryAndTime(query: CountryCovidRequestQuery) {
-    const countryIds = query.countryIds
-      ? commaSeparatedStringToNumberArray(query.countryIds)
-      : undefined;
-    const { start, end } = query;
+  async findByCountryAndTime(query: CountryCovidServiceArgs) {
+    const {countryIds, dateRange, selectCovidDataFields} = query
 
     const countryCovidData = await this.countryCovidRepository.findByCountryAndTime({
       countryIds,
       covidDataArgs: {
         covidCases: {
           where: {
-            date: PrismaDateRangeComparator.dateInsideRange({ start, end }),
+            date: PrismaDateRangeComparator.dateInsideRange(dateRange),
           },
           select: {
-            date: true,
-            newCases: query.newCases,
-            totalCases: query.totalCases,
+            date: selectCovidDataFields.has('date'),
+            newCases: selectCovidDataFields.has('newCases'),
+            totalCases: selectCovidDataFields.has('totalCases'),
           },
         },
       },

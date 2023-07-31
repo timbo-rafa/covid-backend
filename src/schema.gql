@@ -1,0 +1,31 @@
+# ------------------------------------------------------
+# THIS FILE WAS AUTOMATICALLY GENERATED (DO NOT MODIFY)
+# ------------------------------------------------------
+
+type CountryCovidCasesDto {
+  date: DateTime!
+  newCases: Int
+  totalCases: String
+}
+
+input CountryCovidDataInput {
+  countryIds: [ID!]
+  end: DateTime
+  start: DateTime
+}
+
+type CountryDto {
+  covidCases: [CountryCovidCasesDto!]!
+  id: ID!
+  isoCode: String!
+  name: String!
+}
+
+"""
+A date-time string at UTC, such as 2019-12-03T09:54:33Z, compliant with the date-time format.
+"""
+scalar DateTime
+
+type Query {
+  covidData(countryCovidDataInput: CountryCovidDataInput!): [CountryDto!]!
+}

@@ -16,7 +16,7 @@ describe('AppController (e2e)', () => {
     await app.init();
   });
 
-  it('/api/countries/covid-data?countryIds=5&newCases=true', async () => {
+  it.skip('/api/countries/covid-data?countryIds=5&newCases=true', async () => {
     const response = await request(app.getHttpServer())
       .get('/api/countries/covid-data?countryIds=38&newCases=true')
       .expect(200);

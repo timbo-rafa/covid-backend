@@ -1,90 +1,48 @@
-import { IsDate, IsOptional, Matches } from 'class-validator';
-import { Transform, Type } from 'class-transformer';
+import { CountryCovidCasesDto } from '@dtos';
+import { DateRange } from '@utils';
 import { CountryDbQueryArgs } from './country-covid.queries';
 
-export class CountryCovidRequestQuery {
-  @IsOptional()
-  @Type(() => String)
-  @Matches(/^(\d+)(,*\d+)*$/i, {
-    message: (args) => `${args.value} is not a valid list of country ids`,
-  })
-  countryIds?: string;
+export type CovidCaseFields = keyof CountryCovidCasesDto;
 
-  @IsOptional()
-  @IsDate()
-  start?: Date;
+export type CovidDeathFields = 'newDeaths' | 'totalDeaths';
 
-  @IsOptional()
-  @IsDate()
-  end?: Date;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  newCases?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  totalCases?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  newDeaths?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  totalDeaths?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  hospPatients?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  icuPatients?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  weeklyHospAdmissions?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  weeklyIcuAdmissions?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  newTests?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  positiveRate?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  testsPerCase?: boolean;
-  
-  @IsOptional()
-  @Type(() => Boolean)
-  totalTests?: boolean;
+export type CovidHospitalizationsFields = 'hospPatients' | 'icuPatients' | 'weeklyHospAdmissions' | 'weeklyIcuAdmissions';
 
-  @IsOptional()
-  @Type(() => Boolean)
-  newVaccinations?: boolean;
+export type CovidTestsFields = 'newTests' | 'positiveRate' | 'testsPerCase' | 'totalTests';
 
-  @IsOptional()
-  @Type(() => Boolean)
-  peopleFullyVaccinated?: boolean;
+export type CovidVaccinationsFields =
+  | 'newVaccinations'
+  | 'peopleFullyVaccinated'
+  | 'peopleVaccinated'
+  | 'totalBoosters'
+  | 'totalVaccinations';
 
-  @IsOptional()
-  @Type(() => Boolean)
-  peopleVaccinated?: boolean;
+export type AllCovidDataFields = CovidCaseFields | CovidDeathFields | CovidHospitalizationsFields | CovidTestsFields | CovidVaccinationsFields
 
-  @IsOptional()
-  @Type(() => Boolean)
-  totalBoosters?: boolean;
+export const CovidDataFieldArray: AllCovidDataFields[] = [
+  'newCases',
+  'totalCases',
+  'newDeaths',
+  'totalDeaths',
+  'hospPatients',
+  'icuPatients',
+  'weeklyHospAdmissions',
+  'weeklyIcuAdmissions',
+  'newTests',
+  'positiveRate',
+  'testsPerCase',
+  'totalTests',
+  'newVaccinations',
+  'peopleFullyVaccinated',
+  'peopleVaccinated',
+  'totalBoosters',
+  'totalVaccinations',
+]
 
-  @IsOptional()
-  @Type(() => Boolean)
-  totalVaccinations?: boolean;
+export class CountryCovidServiceArgs {
+  countryIds?: number[];
+  dateRange?: Partial<DateRange>;
+  selectCovidDataFields: Set<AllCovidDataFields>
 }
 
 export type CountryCovidArgs = {
