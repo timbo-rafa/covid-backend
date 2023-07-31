@@ -34,7 +34,7 @@ function selectCovidDeaths<ExtArgs extends Args>(
 }
 
 export type CountryDbQueryArgs = {
-  covidCases: ReturnType<typeof selectCovidCases>;
+  covidCases: ReturnType<typeof selectCovidCases> | undefined;
   // confirmedCovidDeaths:
   // covidHospitalizations:
   // covidTests:
@@ -44,12 +44,12 @@ export type CountryDbQueryArgs = {
 export function includeCovidDataInCountryQuery<ExtArgs extends Args>(args: CountryDbQueryArgs, defaults: CountryDbQueryArgs | undefined) {
   return Prisma.validator<Prisma.CountryFindManyArgs>()({
     include: {
-      covidCases: {
+      covidCases: args.covidCases ? {
         ...selectCovidCases(
           args.covidCases,
           defaults?.covidCases,
         ),
-      },
+      } : undefined,
       // date: applyDefault(args.select.date, defaults.select.date),
       // newCases: applyDefault(args.select.newCases, defaults.select.newCases),
       // totalCases

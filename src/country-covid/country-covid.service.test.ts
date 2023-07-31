@@ -37,25 +37,25 @@ describe('CountryCovidService', () => {
     const query: CountryCovidServiceArgs = {
       countryIds: [1, 2, 3],
       dateRange: { start: new Date(Date.UTC(1, 1, 1)), end: new Date(Date.UTC(1, 1, 3)) },
-      selectCovidDataFields: new Set([
+      selectCovidCasesDataFields: new Set([
         'date',
-        'hospPatients',
-        'icuPatients',
         'newCases',
-        'newDeaths',
-        'newTests',
-        'newVaccinations',
-        'peopleFullyVaccinated',
-        'peopleVaccinated',
-        'positiveRate',
-        'testsPerCase',
-        'totalBoosters',
         'totalCases',
-        'totalDeaths',
-        'totalTests',
-        'totalVaccinations',
-        'weeklyHospAdmissions',
-        'weeklyIcuAdmissions',
+        // 'hospPatients',
+        // 'icuPatients',
+        // 'newDeaths',
+        // 'newTests',
+        // 'newVaccinations',
+        // 'peopleFullyVaccinated',
+        // 'peopleVaccinated',
+        // 'positiveRate',
+        // 'testsPerCase',
+        // 'totalBoosters',
+        // 'totalDeaths',
+        // 'totalTests',
+        // 'totalVaccinations',
+        // 'weeklyHospAdmissions',
+        // 'weeklyIcuAdmissions',
       ]),
     };
     const results = await countryCovidService.findByCountryAndTime(query);
@@ -96,7 +96,7 @@ describe('CountryCovidService', () => {
     const query: CountryCovidServiceArgs = {
       countryIds: [1, 2, 3],
       dateRange: { start: new Date(Date.UTC(1, 1, 1)), end: new Date(Date.UTC(1, 1, 3)) },
-      selectCovidDataFields: new Set(['newCases']),
+      selectCovidCasesDataFields: new Set(['newCases']),
     };
     const results = await countryCovidService.findByCountryAndTime(query);
 

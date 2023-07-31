@@ -2,7 +2,7 @@ import { CountryCovidDataInput, CountryDto } from '@dtos';
 import { Args, Info, Query, Resolver } from '@nestjs/graphql';
 import { GraphQLResolveInfo } from 'graphql';
 import * as graphqlFields from 'graphql-fields';
-import { AllCovidDataFields } from './country-covid.models';
+import {  CovidCaseFields } from './country-covid.models';
 import { CountryCovidService } from './country-covid.service';
 
 @Resolver()
@@ -10,13 +10,13 @@ export class CountryCovidResolver {
   constructor(private readonly countryCovidService: CountryCovidService) {}
 
   @Query(() => [CountryDto])
-  covidData(@Args('countryCovidDataInput') input: CountryCovidDataInput, @Info() info: GraphQLResolveInfo) {
+  countryCovidData(@Args('countryCovidDataInput') input: CountryCovidDataInput, @Info() info: GraphQLResolveInfo) {
     const countryIds = input.countryIds?.map((ids) => Number(ids));
 
     return this.countryCovidService.findByCountryAndTime({
       countryIds,
       dateRange: { start: input.start, end: input.end },
-      selectCovidDataFields: this.getSetOfrequestedFields(info),
+      selectCovidCasesDataFields: this.getSetOfrequestedFields(info),
     });
   }
 
@@ -24,15 +24,15 @@ export class CountryCovidResolver {
     const requestedFields = graphqlFields(info);
     const covidCaseFields = requestedFields?.covidCases;
 
-    const selectedCovidDataFields = new Set<AllCovidDataFields>();
+    const selectedCovidCasesFields = new Set<CovidCaseFields>();
     if (!covidCaseFields) {
-      return selectedCovidDataFields;
+      return selectedCovidCasesFields;
     }
 
     for (const field in covidCaseFields) {
-      selectedCovidDataFields.add(field as AllCovidDataFields);
+      selectedCovidCasesFields.add(field as CovidCaseFields);
     }
 
-    return selectedCovidDataFields;
+    return selectedCovidCasesFields;
   }
 }

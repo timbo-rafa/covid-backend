@@ -42,7 +42,7 @@ export const CovidDataFieldArray: AllCovidDataFields[] = [
 export class CountryCovidServiceArgs {
   countryIds?: number[];
   dateRange?: Partial<DateRange>;
-  selectCovidDataFields: Set<AllCovidDataFields>
+  selectCovidCasesDataFields: Set<CovidCaseFields>
 }
 
 export type CountryCovidArgs = {
