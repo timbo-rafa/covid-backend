@@ -15,7 +15,7 @@ import { AppService } from './app.service';
     GraphQLModule.forRoot<ApolloDriverConfig>({
       driver: ApolloDriver,
       autoSchemaFile: join(process.cwd(), 'src/schema.gql'),
-      sortSchema: true,
+      sortSchema: true,   
     }),
     DatabaseModule,
     CountryCovidModule,
