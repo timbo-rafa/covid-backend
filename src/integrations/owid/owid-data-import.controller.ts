@@ -1,5 +1,4 @@
-import { Controller, Get, Query } from '@nestjs/common';
-import { commaSeparatedStringToNumberArray } from '@utils';
+import { Controller, Get } from '@nestjs/common';
 import { OwidDataImportService } from './owid-data-import.service';
 
 @Controller('/import')

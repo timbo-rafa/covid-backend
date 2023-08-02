@@ -6,10 +6,10 @@ export class CountryCovidCasesDto {
   date: Date;
 
   @Field(() => Int, {nullable: true})
-  newCases?: number;
+  newCases: number | null;
 
   @Field(() => String, {nullable: true})
-  totalCases?: bigint | number;
+  totalCases: bigint | number | null;
 }
 
 @InputType()

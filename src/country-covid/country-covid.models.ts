@@ -1,6 +1,6 @@
 import { CountryCovidCasesDto } from '@dtos';
 import { DateRange } from '@utils';
-import { CountryDbQueryArgs } from './country-covid.queries';
+import { CountryDbQueryArgs } from './country-covid.entities';
 
 export type CovidCaseFields = keyof CountryCovidCasesDto;
 
@@ -42,7 +42,7 @@ export const CovidDataFieldArray: AllCovidDataFields[] = [
 export class CountryCovidServiceArgs {
   countryIds?: number[];
   dateRange?: Partial<DateRange>;
-  selectCovidCasesDataFields: Set<CovidCaseFields>
+  selectCovidFields: Set<AllCovidDataFields>
 }
 
 export type CountryCovidArgs = {

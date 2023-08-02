@@ -8,13 +8,15 @@ module.exports = {
       "ts"
     ],
     rootDir: ".",
-    testRegex: "test.ts$",
+    testRegex: ["test.ts$"],
+    testPathIgnorePatterns: [".stub.test.ts$"],
     transform: {
       "^.+\\.(t|j)s$": "ts-jest"
     },
     collectCoverageFrom: [
       "**/*.(t|j)s"
     ],
+    //setupFilesAfterEnv: ["setupTests.ts"],
     coverageDirectory: "../coverage",
     preset: 'ts-jest',
     testEnvironment: 'node',
