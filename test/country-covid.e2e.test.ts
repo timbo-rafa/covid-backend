@@ -2,8 +2,35 @@ import { INestApplication, ValidationPipe } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import * as request from 'supertest';
 import { AppModule } from '../src/app.module';
+import { CountryCovidTableDto } from '@dtos';
 
-describe('AppController (e2e)', () => {
+const countryCovidDataGql = `query {
+  countryCovidTableData(countryCovidDataInput: {}) {
+    id
+    name
+    isoCode
+    newCases
+    totalCases
+    newDeaths
+    totalDeaths
+    hospPatients
+    icuPatients
+    weeklyHospAdmissions
+    weeklyIcuAdmissions
+    newTests
+    positiveRate
+    testsPerCase
+    totalTests
+    newVaccinations
+    peopleFullyVaccinated
+    peopleVaccinated
+    totalBoosters
+    totalVaccinations
+  }
+}
+`;
+
+describe('Country Covid Data (e2e)', () => {
   let app: INestApplication;
 
   beforeEach(async () => {
@@ -15,6 +42,14 @@ describe('AppController (e2e)', () => {
     app.useGlobalPipes(new ValidationPipe({transform: true}))
     await app.init();
   });
+
+  it('should return covid table data as 2d array', async () => {
+    const response = await request(app.getHttpServer()).post('/graphql').send({ query: countryCovidDataGql }).expect(200);
+
+    const countryCovidTableDtos :CountryCovidTableDto[] = response.body.data
+
+    expect(countryCovidTableDtos).toEqual([])
+  })
 
   it.skip('/api/countries/covid-data?countryIds=5&newCases=true', async () => {
     const response = await request(app.getHttpServer())
