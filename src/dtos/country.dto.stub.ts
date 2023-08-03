@@ -1,8 +1,35 @@
+import { DatesAsStrings, SerializedDto } from '@utils';
 import { CountryCovidTableDto } from './country.dto';
+import {
+  ConfirmedCovidCases,
+  ConfirmedCovidDeaths,
+  Country,
+  CovidHospitalizations,
+  CovidTests,
+  CovidVaccinations,
+} from '@prisma/client';
+
+type CountryCovidEntities = Country &
+  ConfirmedCovidCases &
+  ConfirmedCovidDeaths &
+  CovidVaccinations &
+  CovidTests &
+  CovidHospitalizations;
+
+export function getCountryCovidTableSerializedDtoStub(
+  input: Partial<CountryCovidEntities> = {},
+): SerializedDto<CountryCovidTableDto> {
+  const dto = getCountryCovidTableDtoStub(input);
+
+  return {
+    ...dto,
+    date: dto.date.toISOString(),
+  };
+}
 
 export function getCountryCovidTableDtoStub({
   date = new Date(0),
-  id = '0',
+  id = 0,
   isoCode = 'CAN',
   name = 'Canada',
   hospPatients = null,
@@ -22,10 +49,10 @@ export function getCountryCovidTableDtoStub({
   totalVaccinations = null,
   weeklyHospAdmissions = null,
   weeklyIcuAdmissions = null,
-}: Partial<CountryCovidTableDto> = {}): CountryCovidTableDto {
+}: Partial<CountryCovidEntities> = {}): CountryCovidTableDto {
   return {
+    id: id.toString(),
     date,
-    id,
     isoCode,
     name,
     hospPatients,
@@ -34,15 +61,15 @@ export function getCountryCovidTableDtoStub({
     newDeaths,
     newTests,
     newVaccinations,
-    peopleFullyVaccinated,
-    peopleVaccinated,
+    peopleFullyVaccinated: peopleFullyVaccinated?.toString() || null,
+    peopleVaccinated:peopleVaccinated?.toString() || null,
     positiveRate,
     testsPerCase,
-    totalBoosters,
-    totalCases,
-    totalDeaths,
-    totalTests,
-    totalVaccinations,
+    totalBoosters:totalBoosters?.toString() || null,
+    totalCases:totalCases?.toString() || null,
+    totalDeaths:totalDeaths?.toString() || null,
+    totalTests:totalTests?.toString() || null,
+    totalVaccinations:totalVaccinations?.toString() || null,
     weeklyHospAdmissions,
     weeklyIcuAdmissions,
   };

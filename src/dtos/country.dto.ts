@@ -29,50 +29,50 @@ export class CountryCovidTableDto {
   @Field()
   name: string;
 
-  @Field()
+  @Field(() => Date)
   date: Date;
 
   // covid cases
   @Field(() => Int, { nullable: true })
-  newCases: number | null;
+  newCases?: number | null;
   @Field(() => String, { nullable: true })
-  totalCases: bigint | number | null;
+  totalCases?: string | null;
 
   // covid deaths
   @Field(() => Int, { nullable: true })
-  newDeaths: number | null;
+  newDeaths?: number | null;
   @Field(() => String, { nullable: true })
-  totalDeaths: bigint | number | null;
+  totalDeaths?: string | null;
 
   // hospitalizations
   @Field(() => Int, { nullable: true })
-  icuPatients: number | null;
+  icuPatients?: number | null;
   @Field(() => Int, { nullable: true })
-  hospPatients: number | null;
+  hospPatients?: number | null;
   @Field(() => Int, { nullable: true })
-  weeklyIcuAdmissions: number | null;
+  weeklyIcuAdmissions?: number | null;
   @Field(() => Int, { nullable: true })
-  weeklyHospAdmissions: number | null;
+  weeklyHospAdmissions?: number | null;
 
   // covid vaccinations
   @Field(() => String, { nullable: true })
-  totalVaccinations: bigint | number | null;
+  totalVaccinations?: string | null;
   @Field(() => String, { nullable: true })
-  peopleVaccinated: bigint | number | null;
+  peopleVaccinated?: string | null;
   @Field(() => String, { nullable: true })
-  peopleFullyVaccinated: bigint | number | null;
+  peopleFullyVaccinated?: string | null;
   @Field(() => String, { nullable: true })
-  totalBoosters: bigint | number | null;
+  totalBoosters?: string | null;
   @Field(() => Int, { nullable: true })
-  newVaccinations: number | null;
+  newVaccinations?: number | null;
 
   // covid tests
   @Field(() => String, { nullable: true })
-  totalTests: bigint | number | null;
+  totalTests?: string | null;
   @Field(() => Int, { nullable: true })
-  newTests: number | null;
+  newTests?: number | null;
   @Field(() => Int, { nullable: true })
-  positiveRate: number | null;
+  positiveRate?: number | null;
   @Field(() => Int, { nullable: true })
-  testsPerCase: number | null;
+  testsPerCase?: number | null;
 }

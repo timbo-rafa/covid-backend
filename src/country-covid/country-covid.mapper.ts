@@ -25,7 +25,7 @@ export class CountryCovidMapper {
           countryTableByDateDictionary[timestamp] = this.initializeCountryDto({ id, isoCode, name, date });
         }
         countryTableByDateDictionary[timestamp].newCases = newCases;
-        countryTableByDateDictionary[timestamp].totalCases = totalCases;
+        countryTableByDateDictionary[timestamp].totalCases = totalCases?.toString() || null;
       }
 
       for (const covidDeath of covidDeaths) {
@@ -35,7 +35,7 @@ export class CountryCovidMapper {
           countryTableByDateDictionary[timestamp] = this.initializeCountryDto({ id, isoCode, name, date });
         }
         countryTableByDateDictionary[timestamp].newDeaths = newDeaths;
-        countryTableByDateDictionary[timestamp].totalDeaths = totalDeaths;
+        countryTableByDateDictionary[timestamp].totalDeaths = totalDeaths?.toString() || null;
       }
 
       for (const hospitalization of covidHospitalizations) {
@@ -57,10 +57,10 @@ export class CountryCovidMapper {
           countryTableByDateDictionary[timestamp] = this.initializeCountryDto({ id, isoCode, name, date });
         }
         countryTableByDateDictionary[timestamp].newVaccinations = newVaccinations;
-        countryTableByDateDictionary[timestamp].peopleFullyVaccinated = peopleFullyVaccinated;
-        countryTableByDateDictionary[timestamp].peopleVaccinated = peopleVaccinated;
-        countryTableByDateDictionary[timestamp].totalBoosters = totalBoosters;
-        countryTableByDateDictionary[timestamp].totalVaccinations = totalVaccinations;
+        countryTableByDateDictionary[timestamp].peopleFullyVaccinated = peopleFullyVaccinated?.toString() || null;
+        countryTableByDateDictionary[timestamp].peopleVaccinated = peopleVaccinated?.toString() || null;
+        countryTableByDateDictionary[timestamp].totalBoosters = totalBoosters?.toString() || null;
+        countryTableByDateDictionary[timestamp].totalVaccinations = totalVaccinations?.toString() || null;
       }
 
       for (const covidTest of covidTests) {
@@ -72,7 +72,7 @@ export class CountryCovidMapper {
         countryTableByDateDictionary[timestamp].newTests = newTests;
         countryTableByDateDictionary[timestamp].positiveRate = positiveRate;
         countryTableByDateDictionary[timestamp].testsPerCase = testsPerCase;
-        countryTableByDateDictionary[timestamp].totalTests = totalTests;
+        countryTableByDateDictionary[timestamp].totalTests = totalTests?.toString() || null;
       }
 
       return Object.keys(countryTableByDateDictionary)

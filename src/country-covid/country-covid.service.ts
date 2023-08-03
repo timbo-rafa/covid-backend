@@ -19,8 +19,6 @@ export class CountryCovidService {
   async findByCountryAndTime(query: CountryCovidServiceArgs) {
     const { countryIds, dateRange, selectCovidFields } = query;
 
-    console.log(selectCovidFields);
-
     const {
       shouldIncludeCovidCases,
       shouldIncludeCovidDeaths,

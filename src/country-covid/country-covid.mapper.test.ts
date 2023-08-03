@@ -1,14 +1,12 @@
 import { PrismaService } from '@data-layer';
 import { Test } from '@nestjs/testing';
 import { mockDeep } from 'jest-mock-extended';
-import { CountryCovidModule } from './country-covid.module';
-import { CountryCovidService } from './country-covid.service';
-import { CountryCovidMapper } from './country-covid.mapper';
-import { getCountryEntityStub } from './country-covid.repository.stub.test';
 import { getCountryCovidTableDtoStub } from 'src/dtos/country.dto.stub';
+import { CountryCovidMapper } from './country-covid.mapper';
+import { CountryCovidModule } from './country-covid.module';
+import { getCountryEntityStub } from './country-covid.repository.stub.test';
 
 describe('CountryCovidMapper', () => {
-  let countryCovidService: CountryCovidService;
   let countryCovidMapper: CountryCovidMapper;
   const prismaServiceMock = mockDeep<PrismaService>();
 
@@ -22,7 +20,6 @@ describe('CountryCovidMapper', () => {
       .useValue(prismaServiceMock)
       .compile();
 
-    countryCovidService = moduleRef.get<CountryCovidService>(CountryCovidService);
     countryCovidMapper = moduleRef.get<CountryCovidMapper>(CountryCovidMapper);
   });
 
@@ -72,7 +69,7 @@ describe('CountryCovidMapper', () => {
 
     expect(mappedDto[0]).toEqual<(typeof mappedDto)[number]>(
       getCountryCovidTableDtoStub({
-        id: String(firstCountryEntity.id),
+        id: firstCountryEntity.id,
         date: firstCountryEntity.covidDeaths[0].date,
         name: firstCountryEntity.name,
         isoCode: firstCountryEntity.isoCode,
@@ -83,7 +80,7 @@ describe('CountryCovidMapper', () => {
 
     expect(mappedDto[1]).toEqual<(typeof mappedDto)[number]>(
       getCountryCovidTableDtoStub({
-        id: String(firstCountryEntity.id),
+        id: firstCountryEntity.id,
         date: firstCountryEntity.covidCases[0].date,
         name: firstCountryEntity.name,
         isoCode: firstCountryEntity.isoCode,
@@ -97,7 +94,7 @@ describe('CountryCovidMapper', () => {
     );
     expect(mappedDto[2]).toEqual<(typeof mappedDto)[number]>(
       getCountryCovidTableDtoStub({
-        id: String(secondCountryEntity.id),
+        id: secondCountryEntity.id,
         date: secondCountryEntity.covidTests[0].date,
         name: secondCountryEntity.name,
         isoCode: secondCountryEntity.isoCode,
@@ -128,13 +125,13 @@ describe('CountryCovidMapper', () => {
       isoCode: 'AZX',
       name: 'Another Country',
       covidDeaths: [{ date: new Date(2), newDeaths: 3, totalDeaths: BigInt(5) }],
-    })
+    });
 
     const mappedDto = countryCovidMapper.mapEntitiesTo2dTableDto([firstCountryEntity, secondCountryEntity]);
 
     expect(mappedDto[0]).toEqual<(typeof mappedDto)[number]>(
       getCountryCovidTableDtoStub({
-        id: String(firstCountryEntity.id),
+        id: firstCountryEntity.id,
         date: firstCountryEntity.covidCases[0].date,
         name: firstCountryEntity.name,
         isoCode: firstCountryEntity.isoCode,
@@ -144,7 +141,7 @@ describe('CountryCovidMapper', () => {
     );
     expect(mappedDto[1]).toEqual<(typeof mappedDto)[number]>(
       getCountryCovidTableDtoStub({
-        id: String(secondCountryEntity.id),
+        id: secondCountryEntity.id,
         date: secondCountryEntity.covidDeaths[0].date,
         name: secondCountryEntity.name,
         isoCode: secondCountryEntity.isoCode,
@@ -152,5 +149,5 @@ describe('CountryCovidMapper', () => {
         totalDeaths: secondCountryEntity.covidDeaths[0].totalDeaths,
       }),
     );
-  })
+  });
 });

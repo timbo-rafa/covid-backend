@@ -10,20 +10,26 @@ export class CountryCovidResolver {
   constructor(private readonly countryCovidService: CountryCovidService) {}
 
   @Query(() => [CountryDto])
-  async countryCovidData(@Args('countryCovidDataInput') input: CountryCovidDataInput, @Info() info: GraphQLResolveInfo): Promise<CountryDto[]> {
+  async countryCovidData(
+    @Args('countryCovidDataInput') input: CountryCovidDataInput,
+    @Info() info: GraphQLResolveInfo,
+  ): Promise<CountryDto[]> {
     const countryIds = input.countryIds?.map((ids) => Number(ids));
 
     const countries = await this.countryCovidService.findByCountryAndTime({
       countryIds,
       dateRange: { start: input.start, end: input.end },
       selectCovidFields: this.getSetOfrequestedFields(info),
-    })
+    });
 
-    return countries.map(country => ({...country, id: String(country.id)}))
+    return countries.map((country) => ({ ...country, id: String(country.id) }));
   }
 
   @Query(() => [CountryCovidTableDto])
-  countryCovidTableData(@Args('countryCovidDataInput') input: CountryCovidDataInput, @Info() info: GraphQLResolveInfo) {
+  async countryCovidTableData(
+    @Args('countryCovidDataInput') input: CountryCovidDataInput,
+    @Info() info: GraphQLResolveInfo,
+  ): Promise<CountryCovidTableDto[]> {
     const countryIds = input.countryIds?.map((ids) => Number(ids));
 
     return this.countryCovidService.findCountryCovidTableDataByCountryAndTime({
@@ -34,13 +40,13 @@ export class CountryCovidResolver {
   }
 
   private getSetOfrequestedFields(info: GraphQLResolveInfo) {
-    const requestedFields : Partial<Record<keyof CountryCovidTableDto, {}>>= graphqlFields(info);
-    delete requestedFields.id
-    delete requestedFields.isoCode
-    delete requestedFields.name
+    const requestedFields: Partial<Record<keyof CountryCovidTableDto, {}>> = graphqlFields(info);
+    delete requestedFields.id;
+    delete requestedFields.isoCode;
+    delete requestedFields.name;
 
     const selectedCovidFieldsSet = new Set<AllCovidDataFields>(Object.keys(requestedFields) as AllCovidDataFields[]);
-    
-    return selectedCovidFieldsSet;
+
+    return selectedCovidFieldsSet.add('date');
   }
 }
