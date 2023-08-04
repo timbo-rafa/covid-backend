@@ -1,6 +1,7 @@
 import { Injectable, Logger } from '@nestjs/common';
 import * as csvParse from 'csv-parse';
 import * as https from 'https';
+import * as http from 'http';
 import { OwidDataImportRepository } from './owid-data-import.repository';
 import { ConfirmedCasesImportService } from './confirmed-cases-import/confirmed-cases-import.service';
 import { ConfirmedCasesCreateModel } from './confirmed-cases-import/confirmed-cases-import.models';
@@ -16,11 +17,10 @@ import { VaccinationsCreateModel } from './vaccinations-import/vaccinations-impo
 import { CovidTestsCreateModel } from './covid-tests-import/covid-tests-import.models';
 import { CovidTestsImportService } from './covid-tests-import/covid-tests-import.service';
 
-const SAVE_BATCH_SIZE = 20;
-
 @Injectable()
 export class OwidDataImportService {
   private readonly logger = new Logger(OwidDataImportService.name);
+  private readonly SAVE_BATCH_SIZE = 500;
 
   constructor(
     private readonly owidDataImportRepository: OwidDataImportRepository,
@@ -34,21 +34,20 @@ export class OwidDataImportService {
   async importOwidCsvData(csvUrl: string) {
     const countryIdByIso = await this.getCountryIdByIso();
 
-    const confirmedCases: ConfirmedCasesCreateModel[] = [];
-    const confirmedDeaths: ConfirmedDeathsCreateModel[] = [];
-    const hospitalizations: HospitalizationsCreateModel[] = [];
-    const vaccinations: VaccinationsCreateModel[] = [];
-    const covidTests: CovidTestsCreateModel[] = [];
+    let confirmedCases: ConfirmedCasesCreateModel[] = [];
+    let confirmedDeaths: ConfirmedDeathsCreateModel[] = [];
+    let hospitalizations: HospitalizationsCreateModel[] = [];
+    let vaccinations: VaccinationsCreateModel[] = [];
+    let covidTests: CovidTestsCreateModel[] = [];
 
     let parsedRows = 0;
+    let createdCount = 0;
 
     https
       .get(csvUrl, (res) => {
-        res
-          .pipe(csvParse.parse({ fromLine: 2 }))
+        const csvStream = res.pipe(csvParse.parse({ fromLine: 2 }));
+        csvStream
           .on('data', async (row: string[]) => {
-            //console.log(row)
-
             const countryId = this.getCountryIdFromIsoCode(row, countryIdByIso);
             if (countryId === undefined) {
               const { isoCode } = csvColumnNumberByColumnName;
@@ -73,16 +72,42 @@ export class OwidDataImportService {
 
             parsedRows++;
 
-            if (parsedRows >= SAVE_BATCH_SIZE) {
-              await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations, covidTests);
+            if (parsedRows >= this.SAVE_BATCH_SIZE) {
+              csvStream.pause();
+              createdCount += await this.commitParsedRows(
+                confirmedCases,
+                confirmedDeaths,
+                hospitalizations,
+                vaccinations,
+                covidTests,
+              );
+              confirmedCases = [];
+              confirmedDeaths = [];
+              hospitalizations = [];
+              vaccinations = [];
+              covidTests = [];
+
               parsedRows = 0;
             }
+            csvStream.resume();
           })
           .on('end', async () => {
-            console.log('Response ended');
             if (parsedRows > 0) {
-              await this.commitParsedRows(confirmedCases, confirmedDeaths, hospitalizations, vaccinations, covidTests);
+              createdCount += await this.commitParsedRows(
+                confirmedCases,
+                confirmedDeaths,
+                hospitalizations,
+                vaccinations,
+                covidTests,
+              );
+              confirmedCases = [];
+              confirmedDeaths = [];
+              hospitalizations = [];
+              vaccinations = [];
+              covidTests = [];
             }
+
+            console.log(`Saved ${createdCount} rows`);
           });
       })
       .on('error', (err) => {
@@ -116,9 +141,12 @@ export class OwidDataImportService {
     }
 
     if (transaction.length) {
-      const results = await this.owidDataImportRepository.executeTransaction(transaction);
-      console.log(results);
+      const batchCount = await this.owidDataImportRepository.executeTransaction(transaction);
+      console.log(batchCount);
+      return batchCount.map((batch) => batch.count).reduce((prev, cur) => prev + cur, 0);
     }
+
+    return 0;
   }
 
   private getCountryIdFromIsoCode(csvRow: string[], countryIdByIso: CountryIdByIso) {
