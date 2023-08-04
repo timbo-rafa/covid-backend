@@ -2,12 +2,12 @@ import { PrismaService } from '@data-layer';
 import { Test } from '@nestjs/testing';
 import { mockDeep } from 'jest-mock-extended';
 import { getCountryCovidTableDtoStub } from 'src/dtos/country.dto.stub';
-import { CountryCovidMapper } from './country-covid.mapper';
+import { CountryCovidTableMapper } from './country-covid-table.mapper';
 import { CountryCovidModule } from './country-covid.module';
 import { getCountryEntityStub } from './country-covid.repository.stub.test';
 
-describe('CountryCovidMapper', () => {
-  let countryCovidMapper: CountryCovidMapper;
+describe('CountryCovidTableMapper', () => {
+  let countryCovidTableMapper: CountryCovidTableMapper;
   const prismaServiceMock = mockDeep<PrismaService>();
 
   beforeEach(jest.resetAllMocks);
@@ -20,7 +20,7 @@ describe('CountryCovidMapper', () => {
       .useValue(prismaServiceMock)
       .compile();
 
-    countryCovidMapper = moduleRef.get<CountryCovidMapper>(CountryCovidMapper);
+    countryCovidTableMapper = moduleRef.get<CountryCovidTableMapper>(CountryCovidTableMapper);
   });
 
   it('should ignore countries with no data', () => {
@@ -31,7 +31,7 @@ describe('CountryCovidMapper', () => {
       name: 'A country',
     });
 
-    const mappedDto = countryCovidMapper.mapEntitiesTo2dTableDto([firstCountryEntity]);
+    const mappedDto = countryCovidTableMapper.mapEntitiesTo2dTableDto([firstCountryEntity]);
 
     expect(mappedDto).toEqual([]);
   });
@@ -65,7 +65,7 @@ describe('CountryCovidMapper', () => {
         },
       ],
     });
-    const mappedDto = countryCovidMapper.mapEntitiesTo2dTableDto([firstCountryEntity, secondCountryEntity]);
+    const mappedDto = countryCovidTableMapper.mapEntitiesTo2dTableDto([firstCountryEntity, secondCountryEntity]);
 
     expect(mappedDto[0]).toEqual<(typeof mappedDto)[number]>(
       getCountryCovidTableDtoStub({
@@ -127,7 +127,7 @@ describe('CountryCovidMapper', () => {
       covidDeaths: [{ date: new Date(2), newDeaths: 3, totalDeaths: BigInt(5) }],
     });
 
-    const mappedDto = countryCovidMapper.mapEntitiesTo2dTableDto([firstCountryEntity, secondCountryEntity]);
+    const mappedDto = countryCovidTableMapper.mapEntitiesTo2dTableDto([firstCountryEntity, secondCountryEntity]);
 
     expect(mappedDto[0]).toEqual<(typeof mappedDto)[number]>(
       getCountryCovidTableDtoStub({

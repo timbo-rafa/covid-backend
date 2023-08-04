@@ -3,17 +3,26 @@ import { Injectable } from '@nestjs/common';
 import { CountryCovidServiceArgs } from './country-covid.models';
 import { CountryCovidRepository } from './country-covid.repository';
 import { CountryCovidMapper } from './country-covid.mapper';
+import { CountryCovidTableMapper } from './country-covid-table.mapper';
 
 @Injectable()
 export class CountryCovidService {
-  constructor(private readonly countryCovidRepository: CountryCovidRepository,
-    private readonly countryCovidMapper: CountryCovidMapper
-    ) {}
+  constructor(
+    private readonly countryCovidRepository: CountryCovidRepository,
+    private readonly countryCovidMapper: CountryCovidMapper,
+    private readonly countryCovidTableMapper: CountryCovidTableMapper
+  ) {}
 
   async findCountryCovidTableDataByCountryAndTime(query: CountryCovidServiceArgs) {
     const countryCovidData = await this.findByCountryAndTime(query);
 
-    return this.countryCovidMapper.mapEntitiesTo2dTableDto(countryCovidData);
+    return this.countryCovidTableMapper.mapEntitiesTo2dTableDto(countryCovidData);
+  }
+
+  async findCountryCovidDataByCountryAndTime(query: CountryCovidServiceArgs) {
+    const countryCovidData = await this.findByCountryAndTime(query);
+
+    return this.countryCovidMapper.mapEntitiesToDto(countryCovidData);
   }
 
   async findByCountryAndTime(query: CountryCovidServiceArgs) {

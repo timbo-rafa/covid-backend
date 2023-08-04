@@ -14,6 +14,20 @@ input CountryCovidDataInput {
   start: DateTime
 }
 
+type CountryCovidDeathsDto {
+  date: DateTime!
+  newDeaths: Int
+  totalDeaths: String
+}
+
+type CountryCovidHospitalizationsDto {
+  date: DateTime!
+  hospPatients: Int
+  icuPatients: Int
+  weeklyHospAdmissions: Int
+  weeklyIcuAdmissions: Int
+}
+
 """countries with flattened covid data ideal for table display"""
 type CountryCovidTableDto {
   date: DateTime!
@@ -28,8 +42,8 @@ type CountryCovidTableDto {
   newVaccinations: Int
   peopleFullyVaccinated: String
   peopleVaccinated: String
-  positiveRate: Int
-  testsPerCase: Int
+  positiveRate: Float
+  testsPerCase: Float
   totalBoosters: String
   totalCases: String
   totalDeaths: String
@@ -39,8 +53,29 @@ type CountryCovidTableDto {
   weeklyIcuAdmissions: Int
 }
 
+type CountryCovidTestsDto {
+  date: DateTime!
+  newTests: Int
+  positiveRate: Float
+  testsPerCase: Float
+  totalTests: String
+}
+
+type CountryCovidVaccinationsDto {
+  date: DateTime!
+  newVaccinations: Int
+  peopleFullyVaccinated: String
+  peopleVaccinated: String
+  totalBoosters: String
+  totalVaccinations: String
+}
+
 type CountryDto {
   covidCases: [CountryCovidCasesDto!]!
+  covidDeaths: [CountryCovidDeathsDto!]!
+  covidHospitalizations: [CountryCovidHospitalizationsDto!]!
+  covidTests: [CountryCovidTestsDto!]!
+  covidVaccinations: [CountryCovidVaccinationsDto!]!
   id: ID!
   isoCode: String!
   name: String!

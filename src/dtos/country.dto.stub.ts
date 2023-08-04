@@ -1,5 +1,3 @@
-import { DatesAsStrings, SerializedDto } from '@utils';
-import { CountryCovidTableDto } from './country.dto';
 import {
   ConfirmedCovidCases,
   ConfirmedCovidDeaths,
@@ -8,6 +6,8 @@ import {
   CovidTests,
   CovidVaccinations,
 } from '@prisma/client';
+import { SerializedDto } from '@utils';
+import { CountryCovidTableDto } from './country-covid-table.dto';
 
 type CountryCovidEntities = Country &
   ConfirmedCovidCases &

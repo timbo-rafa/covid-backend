@@ -24,7 +24,7 @@
 
 ## Description
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+Covid backend for application to display covid data from [Our World In Data](https://github.com/owid/covid-19-data/tree/master/public/data)
 
 ## Installation
 
@@ -35,14 +35,9 @@ $ npm install
 ## Running the app
 
 ```bash
-# development
-$ npm run start
-
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+$ docker-compose -f devops/local/database.docker-compose.yaml up
+$ npm run db:reset:hard
+$ npm start
 ```
 
 ## Test

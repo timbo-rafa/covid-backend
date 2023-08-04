@@ -16,13 +16,29 @@ export class CountryCovidResolver {
   ): Promise<CountryDto[]> {
     const countryIds = input.countryIds?.map((ids) => Number(ids));
 
-    const countries = await this.countryCovidService.findByCountryAndTime({
+    const countries = await this.countryCovidService.findCountryCovidDataByCountryAndTime({
       countryIds,
       dateRange: { start: input.start, end: input.end },
-      selectCovidFields: this.getSetOfrequestedFields(info),
+      selectCovidFields: this.getSetOfRequestedCountryDtoFields(info),
     });
 
-    return countries.map((country) => ({ ...country, id: String(country.id) }));
+    return countries;
+  }
+
+  private getSetOfRequestedCountryDtoFields(info: GraphQLResolveInfo) {
+    const requestedFields: Partial<Record<keyof CountryDto, {}>> = graphqlFields(info);
+    delete requestedFields.id;
+    delete requestedFields.isoCode;
+    delete requestedFields.name;
+    const selectedCovidFieldsSet = new Set<AllCovidDataFields>([
+      ...Object.keys(requestedFields.covidCases || {}),
+      ...Object.keys(requestedFields.covidDeaths || {}),
+      ...Object.keys(requestedFields.covidTests || {}),
+      ...Object.keys(requestedFields.covidHospitalizations || {}),
+      ...Object.keys(requestedFields.covidVaccinations || {}),
+    ] as AllCovidDataFields[]);
+
+    return selectedCovidFieldsSet.add('date');
   }
 
   @Query(() => [CountryCovidTableDto])
@@ -32,14 +48,19 @@ export class CountryCovidResolver {
   ): Promise<CountryCovidTableDto[]> {
     const countryIds = input.countryIds?.map((ids) => Number(ids));
 
-    return this.countryCovidService.findCountryCovidTableDataByCountryAndTime({
+    const countryData = await this.countryCovidService.findCountryCovidTableDataByCountryAndTime({
       countryIds,
       dateRange: { start: input.start, end: input.end },
-      selectCovidFields: this.getSetOfrequestedFields(info),
+      selectCovidFields: this.getSetOfrequestedTableDtoFields(info),
     });
+
+    console.log(`${this.countryCovidTableData.name} returning ${countryData.length} rows`);
+    console.log(countryData);
+
+    return countryData;
   }
 
-  private getSetOfrequestedFields(info: GraphQLResolveInfo) {
+  private getSetOfrequestedTableDtoFields(info: GraphQLResolveInfo) {
     const requestedFields: Partial<Record<keyof CountryCovidTableDto, {}>> = graphqlFields(info);
     delete requestedFields.id;
     delete requestedFields.isoCode;
