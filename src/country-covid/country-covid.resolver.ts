@@ -55,7 +55,7 @@ export class CountryCovidResolver {
     });
 
     console.log(`${this.countryCovidTableData.name} returning ${countryData.length} rows`);
-    console.log(countryData);
+    //console.log(countryData);
 
     return countryData;
   }
