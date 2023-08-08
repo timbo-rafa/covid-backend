@@ -132,8 +132,6 @@ describe('Country Covid Data (e2e)', () => {
       }),
     ];
 
-    expect(countryCovidTableDtos[0]).toEqual<(typeof countryCovidTableDtos)[number]>(expectedDtos[0]);
-
     expect(countryCovidTableDtos).toEqual<typeof countryCovidTableDtos>(expectedDtos);
   });
 

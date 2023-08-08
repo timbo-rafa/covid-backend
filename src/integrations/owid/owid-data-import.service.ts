@@ -43,76 +43,80 @@ export class OwidDataImportService {
     let parsedRows = 0;
     let createdCount = 0;
 
-    https
-      .get(csvUrl, (res) => {
-        const csvStream = res.pipe(csvParse.parse({ fromLine: 2 }));
-        csvStream
-          .on('data', async (row: string[]) => {
-            const countryId = this.getCountryIdFromIsoCode(row, countryIdByIso);
-            if (countryId === undefined) {
-              const { isoCode } = csvColumnNumberByColumnName;
-              this.logger.warn(`iso code ${row[isoCode]} on incoming csv not found on database. Skipping...`);
-              return;
-            }
+    return new Promise((resolve, reject) => {
+      https
+        .get(csvUrl, (res) => {
+          const csvStream = res.pipe(csvParse.parse({ fromLine: 2 }));
+          csvStream
+            .on('data', async (row: string[]) => {
+              const countryId = this.getCountryIdFromIsoCode(row, countryIdByIso);
+              if (countryId === undefined) {
+                const { isoCode } = csvColumnNumberByColumnName;
+                this.logger.warn(`iso code ${row[isoCode]} on incoming csv not found on database. Skipping...`);
+                return;
+              }
 
-            const confirmedCasesRow = this.confirmedCasesImportService.convertOwidDataRow(row, countryId);
-            confirmedCases.push(confirmedCasesRow);
+              const confirmedCasesRow = this.confirmedCasesImportService.convertOwidDataRow(row, countryId);
+              confirmedCases.push(confirmedCasesRow);
 
-            const confirmedDeathsRow = this.confirmedDeathsImportService.convertOwidDataRow(row, countryId);
-            confirmedDeaths.push(confirmedDeathsRow);
+              const confirmedDeathsRow = this.confirmedDeathsImportService.convertOwidDataRow(row, countryId);
+              confirmedDeaths.push(confirmedDeathsRow);
 
-            const hospitalizationsRow = this.hospitalizationsImportService.convertOwidDataRow(row, countryId);
-            hospitalizations.push(hospitalizationsRow);
+              const hospitalizationsRow = this.hospitalizationsImportService.convertOwidDataRow(row, countryId);
+              hospitalizations.push(hospitalizationsRow);
 
-            const vaccinationsRow = this.vaccinationsImportService.convertOwidDataRow(row, countryId);
-            vaccinations.push(vaccinationsRow);
+              const vaccinationsRow = this.vaccinationsImportService.convertOwidDataRow(row, countryId);
+              vaccinations.push(vaccinationsRow);
 
-            const covidTestsRow = this.covidTestsImportService.convertOwidDataRow(row, countryId);
-            covidTests.push(covidTestsRow);
+              const covidTestsRow = this.covidTestsImportService.convertOwidDataRow(row, countryId);
+              covidTests.push(covidTestsRow);
 
-            parsedRows++;
+              parsedRows++;
 
-            if (parsedRows >= this.SAVE_BATCH_SIZE) {
-              csvStream.pause();
-              createdCount += await this.commitParsedRows(
-                confirmedCases,
-                confirmedDeaths,
-                hospitalizations,
-                vaccinations,
-                covidTests,
-              );
-              confirmedCases = [];
-              confirmedDeaths = [];
-              hospitalizations = [];
-              vaccinations = [];
-              covidTests = [];
+              if (parsedRows >= this.SAVE_BATCH_SIZE) {
+                csvStream.pause();
+                createdCount += await this.commitParsedRows(
+                  confirmedCases,
+                  confirmedDeaths,
+                  hospitalizations,
+                  vaccinations,
+                  covidTests,
+                );
+                confirmedCases = [];
+                confirmedDeaths = [];
+                hospitalizations = [];
+                vaccinations = [];
+                covidTests = [];
 
-              parsedRows = 0;
-            }
-            csvStream.resume();
-          })
-          .on('end', async () => {
-            if (parsedRows > 0) {
-              createdCount += await this.commitParsedRows(
-                confirmedCases,
-                confirmedDeaths,
-                hospitalizations,
-                vaccinations,
-                covidTests,
-              );
-              confirmedCases = [];
-              confirmedDeaths = [];
-              hospitalizations = [];
-              vaccinations = [];
-              covidTests = [];
-            }
+                parsedRows = 0;
+              }
+              csvStream.resume();
+            })
+            .on('end', async () => {
+              if (parsedRows > 0) {
+                createdCount += await this.commitParsedRows(
+                  confirmedCases,
+                  confirmedDeaths,
+                  hospitalizations,
+                  vaccinations,
+                  covidTests,
+                );
+                confirmedCases = [];
+                confirmedDeaths = [];
+                hospitalizations = [];
+                vaccinations = [];
+                covidTests = [];
+              }
 
-            console.log(`Saved ${createdCount} rows`);
-          });
-      })
-      .on('error', (err) => {
-        console.log(`error ${err}`);
-      });
+              console.log(`Saved ${createdCount} rows`);
+              resolve(createdCount)
+            });
+        })
+        .on('error', (err) => {
+          console.log(`error ${err}`);
+          reject(err);
+        });
+    });
   }
 
   private async commitParsedRows(
