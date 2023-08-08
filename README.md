@@ -32,6 +32,14 @@ Covid backend for application to display covid data from [Our World In Data](htt
 $ npm install
 ```
 
+## .env file
+
+At project root folder, create a `.env` file:
+
+```
+DATABASE_URL="postgresql://postgres:password@localhost:5432/covid?schema=public"
+```
+
 ## Running the app
 
 ```bash
@@ -39,6 +47,10 @@ $ docker-compose -f devops/local/database.docker-compose.yaml up
 $ npm run db:reset:hard
 $ npm start
 ```
+
+## Exploring GraphQL Graph
+
+You can use graphql playground at http://localhost:3030/graphql
 
 ## Test
 
@@ -52,17 +64,3 @@ $ npm run test:e2e
 # test coverage
 $ npm run test:cov
 ```
-
-## Support
-
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
-
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](LICENSE).
