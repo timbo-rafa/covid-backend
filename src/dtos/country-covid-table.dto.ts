@@ -13,7 +13,7 @@ export class CountryCovidTableDto {
   @Field()
   name: string;
 
-  @Field(() => Date)
+  @Field()
   date: Date;
 
   // covid cases

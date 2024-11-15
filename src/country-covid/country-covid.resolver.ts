@@ -47,11 +47,12 @@ export class CountryCovidResolver {
     @Info() info: GraphQLResolveInfo,
   ): Promise<CountryCovidTableDto[]> {
     const countryIds = input.countryIds?.map((ids) => Number(ids));
+    const selectCovidFields = this.getSetOfrequestedTableDtoFields(info);
 
     const countryData = await this.countryCovidService.findCountryCovidTableDataByCountryAndTime({
       countryIds,
       dateRange: { start: input.start, end: input.end },
-      selectCovidFields: this.getSetOfrequestedTableDtoFields(info),
+      selectCovidFields,
     });
 
     console.log(`${this.countryCovidTableData.name} returning ${countryData.length} rows`);
