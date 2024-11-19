@@ -20,7 +20,7 @@ export function selectCovidCases<ExtArgs extends Args>(
         newCases: applyDefault(args.select?.newCases, defaults?.select?.newCases),
         totalCases: applyDefault(args.select?.totalCases, defaults?.select?.totalCases),
       },
-      take: 10
+      take: 10,
     });
   }
 }
@@ -39,7 +39,7 @@ export function selectCovidDeaths<ExtArgs extends Args>(
         newDeaths: applyDefault(args.select?.newDeaths, defaults?.select?.newDeaths),
         totalDeaths: applyDefault(args.select?.totalDeaths, defaults?.select?.totalDeaths),
       },
-      take: 10
+      take: 10,
     });
   }
 }
@@ -60,7 +60,7 @@ export function selectCovidHospitalizations<ExtArgs extends Args>(
         weeklyIcuAdmissions: applyDefault(args.select?.weeklyIcuAdmissions, defaults?.select?.weeklyIcuAdmissions),
         icuPatients: applyDefault(args.select?.icuPatients, defaults?.select?.icuPatients),
       },
-      take: 10
+      take: 10,
     });
   }
 }
@@ -82,7 +82,7 @@ export function selectCovidVaccinations<ExtArgs extends Args>(
         totalBoosters: applyDefault(args.select?.totalBoosters, defaults?.select?.totalBoosters),
         totalVaccinations: applyDefault(args.select?.totalVaccinations, defaults?.select?.totalVaccinations),
       },
-      take: 10
+      take: 10,
     });
   }
 }

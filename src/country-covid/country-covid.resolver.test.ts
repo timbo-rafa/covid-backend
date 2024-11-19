@@ -55,7 +55,7 @@ describe('CountryCovidResolver', () => {
     expect(countryCovidServiceMock.findCountryCovidTableDataByCountryAndTime).toHaveBeenCalledTimes(1);
     const expectedArgs: CountryCovidServiceArgs = {
       countryIds: undefined,
-      dateRange: {start: undefined, end: undefined},
+      dateRange: { start: undefined, end: undefined },
       selectCovidFields: new Set([
         'newCases',
         'totalCases',

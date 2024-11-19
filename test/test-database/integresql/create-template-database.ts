@@ -1,8 +1,8 @@
-import { PrismaService } from "@data-layer";
-import { DbConfig, getTestDbConnectionString } from "../test-database.config";
-import { IntegresqlClient } from "./integresql.client";
-import { execSync } from "child_process";
-import { Client} from 'pg';
+import { PrismaService } from '@data-layer';
+import { DbConfig, getTestDbConnectionString } from '../test-database.config';
+import { IntegresqlClient } from './integresql.client';
+import { execSync } from 'child_process';
+import { Client } from 'pg';
 
 export async function createTemplateDatabaseForTests() {
   try {

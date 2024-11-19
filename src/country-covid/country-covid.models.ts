@@ -17,7 +17,12 @@ export type CovidVaccinationsFields =
   | 'totalBoosters'
   | 'totalVaccinations';
 
-export type AllCovidDataFields = CovidCaseFields | CovidDeathFields | CovidHospitalizationsFields | CovidTestsFields | CovidVaccinationsFields
+export type AllCovidDataFields =
+  | CovidCaseFields
+  | CovidDeathFields
+  | CovidHospitalizationsFields
+  | CovidTestsFields
+  | CovidVaccinationsFields;
 
 export const CovidDataFieldArray: AllCovidDataFields[] = [
   'newCases',
@@ -37,12 +42,12 @@ export const CovidDataFieldArray: AllCovidDataFields[] = [
   'peopleVaccinated',
   'totalBoosters',
   'totalVaccinations',
-]
+];
 
 export class CountryCovidServiceArgs {
   countryIds?: number[];
   dateRange?: Partial<DateRange>;
-  selectCovidFields: Set<AllCovidDataFields>
+  selectCovidFields: Set<AllCovidDataFields>;
 }
 
 export type CountryCovidArgs = {

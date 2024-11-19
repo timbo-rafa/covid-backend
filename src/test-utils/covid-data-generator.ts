@@ -4,7 +4,7 @@ import {
   CovidHospitalizations,
   CovidTests,
   CovidVaccinations,
-  PrismaClient
+  PrismaClient,
 } from '@prisma/client';
 
 type GeneratorInput = { seed: number; rowsPerCountry: number };
@@ -36,7 +36,7 @@ export async function generateCovidData(prismaService: PrismaClient, { seed = 1,
   });
   const deaths = prismaService.confirmedCovidDeaths.createMany({
     data: countryCovidDeaths,
-    skipDuplicates: true
+    skipDuplicates: true,
   });
   const tests = prismaService.covidTests.createMany({
     data: countryCovidTests,

@@ -110,4 +110,4 @@ export function getCovidDeathsStub({
   };
 }
 
-test.skip('', () => {})
+test.skip('', () => {});

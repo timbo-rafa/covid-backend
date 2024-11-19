@@ -5,6 +5,6 @@ export function stringYYYYMMDDToDate(date: string) {
 }
 
 export type DateRange = {
-  start: Date,
-  end: Date
-}
+  start: Date;
+  end: Date;
+};

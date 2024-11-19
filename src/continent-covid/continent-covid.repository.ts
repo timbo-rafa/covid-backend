@@ -12,8 +12,7 @@ export class ContinentCovidRepository {
       include: {
         covidData: {
           where: {
-            date:
-              PrismaDateRangeComparator.dateInsideRange(dateRange)
+            date: PrismaDateRangeComparator.dateInsideRange(dateRange),
           },
           orderBy: [{ date: 'desc' }],
         },

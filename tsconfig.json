@@ -17,24 +17,12 @@
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false,
     "paths": {
-      "@dtos": [
-        "src/dtos"
-      ],
-      "@data-layer": [
-        "src/data-layer"
-      ],
-      "@continent-covid": [
-        "src/continent-covid"
-      ],
-      "@country-covid": [
-        "src/country-covid"
-      ],
-      "@owid-data-import": [
-        "src/integrations/owid"
-      ],
-      "@utils": [
-        "src/utils"
-      ]
+      "@dtos": ["src/dtos"],
+      "@data-layer": ["src/data-layer"],
+      "@continent-covid": ["src/continent-covid"],
+      "@country-covid": ["src/country-covid"],
+      "@owid-data-import": ["src/integrations/owid"],
+      "@utils": ["src/utils"]
     }
   }
 }

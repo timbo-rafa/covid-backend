@@ -1,5 +1,11 @@
 import { Field, Float, ID, Int, ObjectType } from '@nestjs/graphql';
-import { CountryCovidCasesDto, CountryCovidDeathsDto, CountryCovidHospitalizationsDto, CountryCovidTestsDto, CountryCovidVaccinationsDto } from './country-covid-data.dto';
+import {
+  CountryCovidCasesDto,
+  CountryCovidDeathsDto,
+  CountryCovidHospitalizationsDto,
+  CountryCovidTestsDto,
+  CountryCovidVaccinationsDto,
+} from './country-covid-data.dto';
 
 @ObjectType()
 export class CountryDto {
@@ -21,7 +27,7 @@ export class CountryDto {
   @Field(() => [CountryCovidVaccinationsDto])
   covidVaccinations: CountryCovidVaccinationsDto[];
 
-  @Field (() => [CountryCovidTestsDto])
+  @Field(() => [CountryCovidTestsDto])
   covidTests: CountryCovidTestsDto[];
 
   @Field(() => [CountryCovidHospitalizationsDto])

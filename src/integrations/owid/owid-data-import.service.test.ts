@@ -58,12 +58,10 @@ describe('OwidDataImportService', () => {
   });
 
   test('should import empty csv', async () => {
-
     // @ts-ignore
-    httpsMock.get.mockImplementationOnce((csUrl, callback: (res: any) => void ) => {
-      const res = Readable.from([])
+    httpsMock.get.mockImplementationOnce((csUrl, callback: (res: any) => void) => {
+      const res = Readable.from([]);
       callback(res);
-      
 
       return res;
     });

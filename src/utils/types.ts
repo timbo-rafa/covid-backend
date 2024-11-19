@@ -8,7 +8,7 @@ export type RecursivePartial<T> = {
     : T[P];
 };
 
-export type SerializedDto<DtoType> = DatesAsStrings<DtoType>
+export type SerializedDto<DtoType> = DatesAsStrings<DtoType>;
 
 export type DatesAsStrings<T> = {
   [P in keyof T]: T[P] extends Date

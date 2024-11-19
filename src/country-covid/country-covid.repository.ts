@@ -8,9 +8,12 @@ import { CountryWithAllCovidDataEntity } from './country-covid.entities';
 export class CountryCovidRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  findByCountryAndTime({ countryIds, covidDataArgs, covidDataDefaults }: CountryCovidArgs): Promise<CountryWithAllCovidDataEntity[]> {
-
-    const relationalCovidDataArgs = includeCovidDataInCountryQuery(covidDataArgs, covidDataDefaults)
+  findByCountryAndTime({
+    countryIds,
+    covidDataArgs,
+    covidDataDefaults,
+  }: CountryCovidArgs): Promise<CountryWithAllCovidDataEntity[]> {
+    const relationalCovidDataArgs = includeCovidDataInCountryQuery(covidDataArgs, covidDataDefaults);
     return this.prismaService.country.findMany({
       where: { id: { in: countryIds } },
       // covidData: {

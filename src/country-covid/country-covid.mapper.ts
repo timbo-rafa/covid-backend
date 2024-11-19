@@ -4,7 +4,7 @@ import {
   CountryCovidHospitalizationsDto,
   CountryCovidTestsDto,
   CountryCovidVaccinationsDto,
-  CountryDto
+  CountryDto,
 } from '@dtos';
 import { Injectable } from '@nestjs/common';
 import { ConfirmedCovidCases, ConfirmedCovidDeaths, CovidHospitalizations, CovidTests, CovidVaccinations } from '@prisma/client';
@@ -14,7 +14,16 @@ import { CountryWithAllCovidDataEntity } from './country-covid.entities';
 export class CountryCovidMapper {
   mapEntitiesToDto(countryEntities: CountryWithAllCovidDataEntity[]): CountryDto[] {
     return countryEntities.map(
-      ({ covidCases = [], covidDeaths = [], covidHospitalizations = [], covidTests = [], covidVaccinations = [], id, isoCode, name }) => {
+      ({
+        covidCases = [],
+        covidDeaths = [],
+        covidHospitalizations = [],
+        covidTests = [],
+        covidVaccinations = [],
+        id,
+        isoCode,
+        name,
+      }) => {
         const countryDto: CountryDto = {
           id: id.toString(),
           isoCode,
@@ -90,5 +99,4 @@ export class CountryCovidMapper {
       weeklyIcuAdmissions,
     };
   }
-
 }

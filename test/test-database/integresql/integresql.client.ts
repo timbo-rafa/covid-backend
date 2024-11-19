@@ -6,7 +6,6 @@ export class IntegresqlError extends Error {}
 
 export class TestDatabaseNotFoundError extends IntegresqlError {}
 
-
 export class IntegresqlClient {
   private host: string;
   private port: number;
@@ -82,7 +81,7 @@ export class IntegresqlClient {
     const data: GetDatabaseResponse = await res.json();
     if (this.testDatabaseNotFoundResponse(res)) {
       throw new TestDatabaseNotFoundError(
-        `Integresql Error: ${data.message}. Have you seeded the test database template (yarn db:seed-e2e)?`
+        `Integresql Error: ${data.message}. Have you seeded the test database template (yarn db:seed-e2e)?`,
       );
     }
 

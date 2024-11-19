@@ -10,7 +10,7 @@ export class CountryCovidService {
   constructor(
     private readonly countryCovidRepository: CountryCovidRepository,
     private readonly countryCovidMapper: CountryCovidMapper,
-    private readonly countryCovidTableMapper: CountryCovidTableMapper
+    private readonly countryCovidTableMapper: CountryCovidTableMapper,
   ) {}
 
   async findCountryCovidTableDataByCountryAndTime(query: CountryCovidServiceArgs) {

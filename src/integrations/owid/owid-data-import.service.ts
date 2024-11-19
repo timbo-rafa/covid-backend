@@ -109,7 +109,7 @@ export class OwidDataImportService {
               }
 
               console.log(`Saved ${createdCount} rows`);
-              resolve(createdCount)
+              resolve(createdCount);
             });
         })
         .on('error', (err) => {
