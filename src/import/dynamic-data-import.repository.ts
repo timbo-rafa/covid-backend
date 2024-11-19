@@ -1,9 +1,10 @@
 import { PrismaService } from '@data-layer';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
+import { getTableColumnNames } from '@prisma/client/sql';
 
 @Injectable()
-export class OwidDataImportRepository {
+export class DynamicDataImportRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   getCountriesIso() {

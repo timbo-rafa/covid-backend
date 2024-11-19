@@ -19,9 +19,7 @@
     "paths": {
       "@dtos": ["src/dtos"],
       "@data-layer": ["src/data-layer"],
-      "@continent-covid": ["src/continent-covid"],
-      "@country-covid": ["src/country-covid"],
-      "@owid-data-import": ["src/integrations/owid"],
+      "@integrations": ["src/import"],
       "@utils": ["src/utils"]
     }
   }

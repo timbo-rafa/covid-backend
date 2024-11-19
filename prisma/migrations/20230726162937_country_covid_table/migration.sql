@@ -1,6 +1,6 @@
 -- CreateTable
-CREATE TABLE "country_covid_data" (
-    "country_id" INTEGER NULL,
+CREATE TABLE "dynamic_data.country_covid" (
+    -- "country_id" INTEGER NULL,
     "iso_code" CHAR(3) NOT NULL,
     "continent" VARCHAR(50),
     "location" VARCHAR(50),

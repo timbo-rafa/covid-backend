@@ -1,5 +1,5 @@
 -- CreateTable
-CREATE TABLE "continent_covid_data" (
+CREATE TABLE "dynamic_data.continent_covid" (
     "continent_id" INTEGER NOT NULL,
     "date" DATE NOT NULL,
     "total_cases" BIGINT,
