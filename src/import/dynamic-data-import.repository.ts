@@ -7,13 +7,13 @@ import { getTableColumnNames } from '@prisma/client/sql';
 export class DynamicDataImportRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  getCountriesIso() {
-    return this.prismaService.country.findMany({
-      select: { id: true, isoCode: true },
-    });
-  }
-
   executeTransaction<T>(prismaPromises: Prisma.PrismaPromise<T>[]) {
     return this.prismaService.$transaction(prismaPromises);
+  }
+
+  saveImportedCountryCovidData(data: Prisma.CovidCreateManyInput[]) {
+    return this.prismaService.covid.createMany({
+      data
+    })
   }
 }

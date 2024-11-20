@@ -5,6 +5,6 @@ import { DatabaseMetadataRepository } from './database-metadata.repository';
 @Module({
   imports: [],
   providers: [PrismaService, DatabaseMetadataRepository],
-  exports: [PrismaService],
+  exports: [PrismaService, DatabaseMetadataRepository],
 })
 export class DatabaseModule {}

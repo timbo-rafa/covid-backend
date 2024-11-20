@@ -1,5 +1,6 @@
 export const covidColumnNameToTsConstructor = {
   iso_code: String,
+  code: String,
   continent: String,
   location: String,
   date: Date,

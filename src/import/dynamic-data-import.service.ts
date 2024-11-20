@@ -5,29 +5,37 @@ import * as http from 'http';
 import { DynamicDataImportRepository } from './dynamic-data-import.repository';
 import { Prisma } from '@prisma/client';
 import { DatabaseMetadataRepository } from 'src/data-layer/database-module/database-metadata.repository';
+import { castCsvColumn } from './cast-csv-field';
+import { parseUrl } from 'src/utils/url';
 
 @Injectable()
 export class DynamicDataImportService<DataType = unknown> {
   private readonly logger = new Logger(DynamicDataImportService.name);
   private readonly SAVE_BATCH_SIZE = 500;
 
-  constructor(private readonly dynamicDataImportRepository: DynamicDataImportRepository,
-    private readonly DatabaseMetadataRepository: DatabaseMetadataRepository
-
+  constructor(
+    private readonly dynamicDataImportRepository: DynamicDataImportRepository,
+    private readonly DatabaseMetadataRepository: DatabaseMetadataRepository,
   ) {}
 
   async importDynamicCsvData(csvUrl: string) {
-    let rows: DataType[] = [];
+    let rows: Prisma.CovidCreateManyInput[] = [];
 
     let parsedRows = 0;
     let createdCount = 0;
 
-    const tableNames = this.DatabaseMetadataRepository.getColumnNames('dynamic_data', 'country_covid');
+    const url = parseUrl(csvUrl);
+
+    if (!url) {
+      return Promise.reject(new Error('Invalid encoded URL'));
+    }
 
     return new Promise((resolve, reject) => {
       http
-        .get(csvUrl, (res) => {
-          const csvStream = res.pipe(csvParse.parse({ cast: true, castDate: true }));
+        .get(url, (res) => {
+          const csvStream = res.pipe(
+            csvParse.parse({ cast: castCsvColumn, columns: true, skip_empty_lines: true, skip_records_with_empty_values: true }),
+          );
           csvStream
             .on('data', async (row) => {
               rows.push(row);
@@ -36,7 +44,7 @@ export class DynamicDataImportService<DataType = unknown> {
 
               if (parsedRows >= this.SAVE_BATCH_SIZE) {
                 csvStream.pause();
-                createdCount += await this.commitBatch(rows, 'dynamic_data.country_covid');
+                createdCount += await this.commitCountryCovidBatch(rows);
 
                 rows = [];
                 parsedRows = 0;
@@ -45,7 +53,7 @@ export class DynamicDataImportService<DataType = unknown> {
             })
             .on('end', async () => {
               if (parsedRows > 0) {
-                createdCount += await this.commitBatch(rows);
+                createdCount += await this.commitCountryCovidBatch(rows);
                 rows = [];
               }
 
@@ -60,20 +68,19 @@ export class DynamicDataImportService<DataType = unknown> {
     });
   }
 
-  private async commitBatch(rows: DataType[], tableName: string) {
-    const transaction: Prisma.PrismaPromise<number>[] = [];
+  private async commitCountryCovidBatch(rows: Prisma.CovidCreateManyInput[]) {
+    const transaction: Prisma.PrismaPromise<Prisma.BatchPayload>[] = [];
 
     if (rows.length) {
-      const batch = this.dynamicDataImportRepository.saveImportedCountryCovidData(rows, tableName);
+      const batch = this.dynamicDataImportRepository.saveImportedCountryCovidData(rows);
       transaction.push(batch);
     }
 
     if (transaction.length) {
-      console.log(JSON.stringify({ length: rows.length, first: rows[0] }));
-      return 0;
-      // const batchCount = await this.owidDataImportRepository.executeTransaction(transaction);
-      // console.log(batchCount);
-      // return batchCount.map((batch) => batch.count).reduce((prev, cur) => prev + cur, 0);
+      const { code, country, continent, date } = rows[0];
+      const batchCount = await this.dynamicDataImportRepository.executeTransaction(transaction);
+      console.log(JSON.stringify({ code, country, continent, date, batchCount }));
+      return batchCount.map((batch) => batch.count).reduce((prev, cur) => prev + cur, 0);
     }
 
     return 0;
