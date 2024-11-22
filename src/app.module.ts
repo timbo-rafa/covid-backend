@@ -4,20 +4,17 @@ import { RouterModule } from '@nestjs/core';
 import { DynamicDataImportModule } from 'src/import';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
+import { TableModule } from './table/table.module';
 
 @Module({
   imports: [
     DatabaseModule,
     DynamicDataImportModule,
+    TableModule,
     RouterModule.register([
       {
         path: 'api/v1',
-        children: [
-          {
-            path: 'import',
-            module: DynamicDataImportModule,
-          },
-        ],
+        children: [TableModule, DynamicDataImportModule],
       },
     ]),
   ],

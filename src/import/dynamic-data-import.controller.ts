@@ -1,7 +1,7 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { DynamicDataImportService } from './dynamic-data-import.service';
 
-@Controller()
+@Controller('/import')
 export class DynamicDataImportController {
   constructor(private readonly dynamicDataImportService: DynamicDataImportService) {}
 
