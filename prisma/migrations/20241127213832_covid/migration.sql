@@ -2,8 +2,8 @@
 CREATE TABLE "covid" (
     "id" SERIAL NOT NULL,
     "code" VARCHAR(10),
-    "country" VARCHAR(50) NOT NULL,
-    "continent" VARCHAR(50),
+    "country" TEXT NOT NULL,
+    "continent" TEXT,
     "date" DATE NOT NULL,
     "total_cases" DOUBLE PRECISION,
     "new_cases" DOUBLE PRECISION,

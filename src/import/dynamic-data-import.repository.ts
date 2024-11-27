@@ -13,6 +13,7 @@ export class DynamicDataImportRepository {
   saveImportedCountryCovidData(data: Prisma.CovidCreateManyInput[]) {
     return this.prismaService.covid.createMany({
       data,
+      skipDuplicates: true,
     });
   }
 }

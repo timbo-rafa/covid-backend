@@ -1,7 +1,7 @@
 import { Controller, Get, Query } from '@nestjs/common';
 import { TableService } from './table.service';
 import { DatabaseMetadataService } from 'src/data-layer/database-module';
-import { TableNotFoundException } from 'src/exceptions/bad-request.exception';
+import { TableNotFoundException } from 'src/exceptions';
 
 @Controller('/table')
 export class TableController {

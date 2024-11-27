@@ -4,7 +4,7 @@ import * as csvParse from 'csv-parse';
 import * as http from 'http';
 import { DynamicDataImportRepository } from './dynamic-data-import.repository';
 import { Prisma } from '@prisma/client';
-import { castCsvColumn } from './cast-csv-field';
+import { castCsvColumn } from './cast-csv-column';
 import { parseUrl } from 'src/utils/url';
 
 @Injectable()
@@ -73,10 +73,18 @@ export class DynamicDataImportService {
     }
 
     if (transaction.length) {
-      const { code, country, continent, date } = rows[0];
+      // try {
       const batchCount = await this.dynamicDataImportRepository.executeTransaction(transaction);
+      const { code, country, continent, date } = rows[0];
       console.log(JSON.stringify({ code, country, continent, date, batchCount }));
       return batchCount.map((batch) => batch.count).reduce((prev, cur) => prev + cur, 0);
+      // } catch (error) {
+      //   if (error instanceof PrismaClientKnownRequestError) {
+      //     console.warn('Error saving data. Skipping this batch...', JSON.stringify(error));
+      //   } else {
+      //     throw error;
+      //   }
+      // }
     }
 
     return 0;

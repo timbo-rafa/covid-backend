@@ -1,4 +1,5 @@
 import { CastingFunction } from 'csv-parse/.';
+import { parseISO } from 'date-fns';
 
 export const castCsvColumn: CastingFunction = (value, context) => {
   if (context.header) return value;
@@ -12,9 +13,9 @@ export const castCsvColumn: CastingFunction = (value, context) => {
     return n;
   }
 
-  const ms = Date.parse(value);
-  if (!Number.isNaN(ms)) {
-    return new Date(ms);
+  const date = parseISO(value);
+  if (!Number.isNaN(date.getTime())) {
+    return new Date(date);
   }
 
   return value;

@@ -12,8 +12,8 @@ model Covid {
   id                                         Int      @id @default(autoincrement())
   //countryId                             Int      @map("country_id")
   code                                       String?  @map("code") @db.VarChar(10)
-  country                                    String   @map("country") @db.VarChar(50)
-  continent                                  String?  @map("continent") @db.VarChar(50)
+  country                                    String   @map("country")
+  continent                                  String?  @map("continent")
   // location                              String?   @map("location") @db.VarChar(50)
   date                                       DateTime @map("date") @db.Date
   total_cases                                Float?   @map("total_cases")
