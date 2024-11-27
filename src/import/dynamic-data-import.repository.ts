@@ -1,7 +1,6 @@
 import { PrismaService } from '@data-layer';
 import { Injectable } from '@nestjs/common';
 import { Prisma } from '@prisma/client';
-import { getTableColumnNames } from '@prisma/client/sql';
 
 @Injectable()
 export class DynamicDataImportRepository {
@@ -13,7 +12,7 @@ export class DynamicDataImportRepository {
 
   saveImportedCountryCovidData(data: Prisma.CovidCreateManyInput[]) {
     return this.prismaService.covid.createMany({
-      data
-    })
+      data,
+    });
   }
 }

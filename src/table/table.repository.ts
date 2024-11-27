@@ -6,11 +6,11 @@ import { Prisma } from '@prisma/client';
 export class TableRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  getTableData<DataType = unknown>(tableName: string): Prisma.PrismaPromise<DataType[]> {
-    // check if table exists before
+  getTableData<DataType = Record<string, string | number>>(tableName: string): Prisma.PrismaPromise<DataType[]> {
     const tableColumns = '*';
     return this.prismaService.$queryRawUnsafe(`
       SELECT ${tableColumns} FROM ${tableName}
+      ORDER BY date ASC
       LIMIT 1000
       `);
   }

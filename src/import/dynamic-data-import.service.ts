@@ -4,19 +4,15 @@ import * as csvParse from 'csv-parse';
 import * as http from 'http';
 import { DynamicDataImportRepository } from './dynamic-data-import.repository';
 import { Prisma } from '@prisma/client';
-import { DatabaseMetadataRepository } from 'src/data-layer/database-module/database-metadata.repository';
 import { castCsvColumn } from './cast-csv-field';
 import { parseUrl } from 'src/utils/url';
 
 @Injectable()
-export class DynamicDataImportService<DataType = unknown> {
+export class DynamicDataImportService {
   private readonly logger = new Logger(DynamicDataImportService.name);
   private readonly SAVE_BATCH_SIZE = 500;
 
-  constructor(
-    private readonly dynamicDataImportRepository: DynamicDataImportRepository,
-    private readonly DatabaseMetadataRepository: DatabaseMetadataRepository,
-  ) {}
+  constructor(private readonly dynamicDataImportRepository: DynamicDataImportRepository) {}
 
   async importDynamicCsvData(csvUrl: string) {
     let rows: Prisma.CovidCreateManyInput[] = [];

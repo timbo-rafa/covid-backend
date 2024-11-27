@@ -50,7 +50,7 @@ $ npm start
 
 ## Exploring GraphQL Graph
 
-You can use graphql playground at http://localhost:3030/graphql
+You can use graphql playground at http://localhost:5001/graphql
 
 ## Test
 

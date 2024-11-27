@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { TableRepository } from './table.repository';
+import { groupBy } from 'lodash';
 
 @Injectable()
 export class TableService {
@@ -7,5 +8,13 @@ export class TableService {
 
   getTableData(tableName: string) {
     return this.tableRepository.getTableData(tableName);
+  }
+
+  async getTableDataDictionaryByColumn(tableName: string, columnName: string) {
+    const tableData = await this.getTableData(tableName);
+
+    const tableDictionaryByColumn = groupBy(tableData, columnName);
+
+    return tableDictionaryByColumn;
   }
 }
