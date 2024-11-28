@@ -1,5 +1,5 @@
 import { castCsvColumn } from './cast-csv-column';
-import { CastingContext } from 'csv-parse/.';
+import { CastingContext } from 'csv-parse';
 
 describe('cast csv field', () => {
   const context = {} as unknown as CastingContext;

@@ -1,4 +1,4 @@
-import { CastingFunction } from 'csv-parse/.';
+import { CastingFunction } from 'csv-parse';
 import { parseISO } from 'date-fns';
 
 export const castCsvColumn: CastingFunction = (value, context) => {
