@@ -8,3 +8,12 @@ export class TableNotFoundException extends NotFoundException {
     });
   }
 }
+
+export class ColumnNotFoundException extends NotFoundException {
+  constructor(errorMessage: string) {
+    super({
+      status: HttpStatus.NOT_FOUND,
+      error: errorMessage,
+    });
+  }
+}

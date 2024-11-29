@@ -16,14 +16,15 @@ export class DatabaseMetadataRepository {
     return null;
   }
 
-  async getColumnName(tableName: string, columnName: string) {
-    const columnMetadata = await this.prismaService.$queryRawTyped(getTableColumnName(tableName, columnName));
+  async getColumnNames(tableName: string, columnNames: string[]) {
+    const columnMetadata = await this.prismaService.$queryRawTyped(getTableColumnName(tableName, columnNames));
 
     if (columnMetadata.length > 0) {
-      const { tableName, columnName } = columnMetadata[0];
+      const { tableName } = columnMetadata[0];
+      const columnNames = columnMetadata.map((metadata) => metadata.columnName).filter((name) => name !== null);
 
-      if (tableName && columnName) {
-        return { tableName, columnName };
+      if (tableName) {
+        return { tableName, columnNames };
       }
     }
 

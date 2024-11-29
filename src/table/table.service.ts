@@ -1,20 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { TableRepository } from './table.repository';
-import { groupBy } from 'lodash';
 
 @Injectable()
 export class TableService {
+  private readonly logger = new Logger(TableService.name);
   constructor(private readonly tableRepository: TableRepository) {}
 
-  getTableData(tableName: string) {
-    return this.tableRepository.getTableData(tableName);
+  getTableData(tableName: string, selectColumnNames?: string[]) {
+    return this.tableRepository.getTableData(tableName, selectColumnNames);
   }
 
-  async getTableDataDictionaryByColumn(tableName: string, columnName: string) {
-    const tableData = await this.getTableData(tableName);
+  async getTableDataDictionaryByColumn(tableName: string, dictionaryColumnName: string, selectColumnNames: string[] = []) {
+    const tableData = await this.getTableData(tableName, [dictionaryColumnName, ...selectColumnNames]);
 
-    const tableDictionaryByColumn = groupBy(tableData, columnName);
-
+    const tableDictionaryByColumn = Object.groupBy(tableData, (dataRow) => dataRow[dictionaryColumnName]);
     return tableDictionaryByColumn;
   }
 }

@@ -1,28 +1,48 @@
-import { Controller, Get, Query } from '@nestjs/common';
+import { Controller, Get, Param, ParseArrayPipe, Query } from '@nestjs/common';
 import { TableService } from './table.service';
 import { DatabaseMetadataService } from 'src/data-layer/database-module';
-import { TableNotFoundException } from 'src/exceptions';
+import { ColumnNotFoundException, TableNotFoundException } from 'src/exceptions';
+import { TableValidator } from './table.validator';
 
-@Controller('/table')
+@Controller('/tables')
 export class TableController {
   constructor(private readonly tableService: TableService, private readonly databaseMetadataService: DatabaseMetadataService) {}
 
-  @Get()
-  async getTable(@Query('tableName') tableName: string) {
-    const validatedTableName = await this.databaseMetadataService.getTableName(tableName);
-    if (!validatedTableName) {
+  @Get(':tableName')
+  async getTable(
+    @Param('tableName') tableName: string,
+    @Query('dictionaryColumnName') dictionaryColumnName?: string,
+    @Query('selectColumnName', new ParseArrayPipe({ items: String, separator: ',' })) selectColumnNames?: string[],
+  ) {
+    console.log(typeof selectColumnNames, JSON.stringify(selectColumnNames));
+    if (dictionaryColumnName) {
+      return this.getTableDictionaryByColumn(tableName, dictionaryColumnName, selectColumnNames);
+    }
+
+    // proper validation missing!
+
+    return this.tableService.getTableData(tableName, selectColumnNames);
+  }
+
+  async getTableDictionaryByColumn(tableName: string, dictionaryColumnName: string, selectColumnNames: string[] = []) {
+    const validatedMetadata = await this.databaseMetadataService.getColumnNames(tableName, [
+      dictionaryColumnName,
+      ...selectColumnNames,
+    ]);
+
+    if (!validatedMetadata) {
       throw new TableNotFoundException(`table ${tableName} not found`);
     }
 
-    return this.tableService.getTableData(validatedTableName);
-  }
-
-  async getTableDictionaryByColumn(@Query('tableName') tableName: string, @Query('columnName') columnName: string) {
-    const validated = await this.databaseMetadataService.getColumnName(tableName, columnName);
-    if (!validated) {
-      throw new TableNotFoundException(`table ${tableName} or column ${columnName} not found`);
+    const validatedDictionaryColumnName = validatedMetadata.columnNames.find((name) => name === dictionaryColumnName);
+    const validatedSelectColumnNames = validatedMetadata.columnNames.filter((name) => selectColumnNames.includes(name));
+    if (!validatedDictionaryColumnName) {
+      throw new ColumnNotFoundException(`Column ${dictionaryColumnName} not found`);
+    }
+    if (validatedSelectColumnNames.length !== selectColumnNames.length) {
+      throw new ColumnNotFoundException(`Not all selected columns ${selectColumnNames} were found`);
     }
 
-    return this.tableService.getTableDataDictionaryByColumn(validated.tableName, validated.columnName);
+    return this.tableService.getTableDataDictionaryByColumn(tableName, validatedDictionaryColumnName, validatedSelectColumnNames);
   }
 }

@@ -6,12 +6,20 @@ import { Prisma } from '@prisma/client';
 export class TableRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  getTableData<DataType = Record<string, string | number>>(tableName: string): Prisma.PrismaPromise<DataType[]> {
-    const tableColumns = '*';
-    return this.prismaService.$queryRawUnsafe(`
-      SELECT ${tableColumns} FROM ${tableName}
-      ORDER BY date ASC
-      LIMIT 1000
-      `);
+  getTableData<DataType = Record<string, string | number>>(
+    tableName: string,
+    selectColumnNames?: string[],
+  ): Prisma.PrismaPromise<DataType[]> {
+    const selectColumns = selectColumnNames?.join() || '*';
+
+    const where = selectColumnNames
+      ? 'WHERE ' + selectColumnNames.map((columnName) => `${columnName} IS NOT NULL`).join(' AND ')
+      : '';
+
+    const sql = `
+      SELECT ${selectColumns} FROM ${tableName}
+      ${where}
+      `;
+    return this.prismaService.$queryRawUnsafe(sql);
   }
 }
