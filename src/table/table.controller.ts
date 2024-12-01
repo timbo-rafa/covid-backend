@@ -32,19 +32,15 @@ export class TableController {
       throw new TableNotFoundException(`table ${tableName} not found`);
     }
 
-    const validatedDictionaryColumnNames = validatedMetadata.columnNames.filter((name) => dictionaryColumnNames.includes(name));
-    const validatedSelectColumnNames = validatedMetadata.columnNames.filter((name) => selectColumnNames.includes(name));
-    if (validatedDictionaryColumnNames.length !== dictionaryColumnNames.length) {
-      throw new ColumnNotFoundException(`Not all dictionary column ${dictionaryColumnNames} were found`);
-    }
-    if (validatedSelectColumnNames.length !== selectColumnNames.length) {
-      throw new ColumnNotFoundException(`Not all selected columns ${selectColumnNames} were found`);
+    const specifiedColumnNames = [...dictionaryColumnNames, ...selectColumnNames]
+    if (specifiedColumnNames.length !== validatedMetadata.columnNames.length) {
+      throw new ColumnNotFoundException(`Not all specified columns ${specifiedColumnNames} were found`);
     }
 
     return this.tableService.getTableDataDictionaryByColumn(
       tableName,
-      validatedDictionaryColumnNames,
-      validatedSelectColumnNames,
+      dictionaryColumnNames,
+      selectColumnNames,
     );
   }
 }

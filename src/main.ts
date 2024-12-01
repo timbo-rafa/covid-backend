@@ -1,6 +1,7 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { ValidationPipe } from '@nestjs/common';
+import { applyCustomSerializationToJsTypes } from './custom-js-types-serialization';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule, { cors: { credentials: true, origin: 'http://localhost:3000' } });
@@ -9,7 +10,4 @@ async function bootstrap() {
 }
 bootstrap();
 
-// @ts-ignore
-BigInt.prototype.toJSON = function () {
-  return this.toString();
-};
+applyCustomSerializationToJsTypes()

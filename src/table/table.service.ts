@@ -1,13 +1,16 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TableRepository } from './table.repository';
+import { convertJsDatesToUnixTimestamp } from '@utils';
 
 @Injectable()
 export class TableService {
   private readonly logger = new Logger(TableService.name);
   constructor(private readonly tableRepository: TableRepository) {}
 
-  getTableData(tableName: string, selectColumnNames?: string[]) {
-    return this.tableRepository.getTableData(tableName, selectColumnNames);
+  async getTableData(tableName: string, selectColumnNames?: string[]) {
+    const data = await this.tableRepository.getTableData(tableName, selectColumnNames);
+
+    return convertJsDatesToUnixTimestamp(data);
   }
 
   async getTableDataDictionaryByColumn(tableName: string, dictionaryColumnNames: string[], selectColumnNames: string[] = []) {
@@ -21,17 +24,17 @@ export class TableService {
       const tableDictionaryByTwoColumns: Partial<
         Record<string | number, Partial<Record<string | number, Record<string | number, string | number>[]>>>
       > = {};
-      for (const key in tableDictionaryByColumn) {
-        const firstGroupByData = tableDictionaryByColumn[key];
+      for (const firstKey in tableDictionaryByColumn) {
+        const dataInFirstKey = tableDictionaryByColumn[firstKey];
 
-        tableDictionaryByTwoColumns[key] = {};
-        if (!firstGroupByData) {
+        tableDictionaryByTwoColumns[firstKey] = {};
+        if (!dataInFirstKey) {
           continue;
         }
 
-        const secondGroupByData = Object.groupBy(firstGroupByData, (dataRow) => dataRow[secondGroupBy]);
+        const dataInFirstKeyGroupedBySecondKey = Object.groupBy(dataInFirstKey, (dataRow) => dataRow[secondGroupBy]);
 
-        tableDictionaryByTwoColumns[key] = secondGroupByData;
+        tableDictionaryByTwoColumns[firstKey] = dataInFirstKeyGroupedBySecondKey;
       }
 
       return tableDictionaryByTwoColumns;
