@@ -27,7 +27,7 @@ describe('TableController (e2e)', () => {
     await app.init();
   });
 
-  it('/tables/covid?dictionaryColumnNames=code,date&selectColumnNames=total_cases', async () => {
+  it('get table data in dictionary form with column selection', async () => {
     const times = [new Date('2020-03-03'), new Date('2020-03-04')];
     const data: Prisma.CovidCreateManyInput[] = [
       { code: 'BRA', country: 'Brazil', date: times[0], total_cases: 5 },
@@ -35,25 +35,21 @@ describe('TableController (e2e)', () => {
       { code: 'CAN', country: 'Canada', date: times[0], total_cases: 3 },
     ];
 
-    await prismaService.covid.createManyAndReturn({
-      data,
-    });
+    await prismaService.covid.createManyAndReturn({ data });
 
     const response = await request
       .default(app.getHttpServer())
       .get('/tables/covid?dictionaryColumnNames=code,date&selectColumnNames=total_cases')
-      .expect(200)
+      .expect(200);
 
-    expect(response.body).toEqual(
-      {
-        BRA: {
-          [times[0].getTime()]: [data[0]],
-          [times[1].getTime()]: [data[1]],
-        },
-        CAN: {
-          [times[0].getTime()]: [data[2]],
-        },
+    expect(response.body).toEqual({
+      BRA: {
+        [times[0].getTime()]: [{ code: 'BRA', date: times[0].getTime(), total_cases: 5 }],
+        [times[1].getTime()]: [{ code: 'BRA', date: times[1].getTime(), total_cases: 1 }],
       },
-    )
+      CAN: {
+        [times[0].getTime()]: [{ code: 'CAN', date: times[0].getTime(), total_cases: 3 }],
+      },
+    });
   });
 });
