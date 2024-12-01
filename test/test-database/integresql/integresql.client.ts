@@ -15,8 +15,8 @@ export class IntegresqlClient {
 
   constructor() {
     this.dbConfig = getTestDbConfig();
-    this.host = process.env.INTEGRESQL_HOST || '127.0.0.1';
-    this.port = Number(process.env.INTEGRESQL_PORT) || 5001;
+    this.host = process.env.INTEGRESQL_PGHOST || '127.0.0.1';
+    this.port = Number(process.env.INTEGRESQL_PGPORT) || 5432;
 
     const url = 'http://' + this.host + ':' + this.port;
     this.templatesUrl = url + '/api/v1/templates';

@@ -10,10 +10,33 @@ export class TableService {
     return this.tableRepository.getTableData(tableName, selectColumnNames);
   }
 
-  async getTableDataDictionaryByColumn(tableName: string, dictionaryColumnName: string, selectColumnNames: string[] = []) {
-    const tableData = await this.getTableData(tableName, [dictionaryColumnName, ...selectColumnNames]);
+  async getTableDataDictionaryByColumn(tableName: string, dictionaryColumnNames: string[], selectColumnNames: string[] = []) {
+    const tableData = await this.getTableData(tableName, [...dictionaryColumnNames, ...selectColumnNames]);
 
-    const tableDictionaryByColumn = Object.groupBy(tableData, (dataRow) => dataRow[dictionaryColumnName]);
+    const [firstGroupBy, secondGroupBy] = dictionaryColumnNames;
+
+    const tableDictionaryByColumn = Object.groupBy(tableData, (dataRow) => dataRow[firstGroupBy]);
+
+    if (secondGroupBy) {
+      const tableDictionaryByTwoColumns: Partial<
+        Record<string | number, Partial<Record<string | number, Record<string | number, string | number>[]>>>
+      > = {};
+      for (const key in tableDictionaryByColumn) {
+        const firstGroupByData = tableDictionaryByColumn[key];
+
+        tableDictionaryByTwoColumns[key] = {};
+        if (!firstGroupByData) {
+          continue;
+        }
+
+        const secondGroupByData = Object.groupBy(firstGroupByData, (dataRow) => dataRow[secondGroupBy]);
+
+        tableDictionaryByTwoColumns[key] = secondGroupByData;
+      }
+
+      return tableDictionaryByTwoColumns;
+    }
+
     return tableDictionaryByColumn;
   }
 }
