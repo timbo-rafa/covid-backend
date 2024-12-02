@@ -1,19 +1,20 @@
+import { isDate } from 'node:util/types';
+
 export function commaSeparatedStringToNumberArray(str: string) {
   return str.split(',').map((id) => Number(id));
 }
 
-export function convertJsDatesToUnixTimestamp<DataType extends Record<string, string | number | Date | null | undefined>>(
-  data: DataType[],
-) {
+export function convertJsDatesToUnixTimestamp<
+  DataType extends Record<string, ValueType | Date>,
+  ValueType extends string | number | null | undefined,
+>(data: DataType[]): Record<string, NonNullable<ValueType> | number>[] {
   return data.map((dataRow) => {
-    if (typeof dataRow === 'object' && dataRow !== null) {
-      for (let [key, value] of Object.entries(dataRow)) {
-        if (value instanceof Date) {
-          // @ts-ignore
-          dataRow[key as keyof typeof dataRow] = value.getTime();
-        }
+    const newRow: Record<string, NonNullable<ValueType> | number> = {};
+    for (let [key, value] of Object.entries(dataRow)) {
+      if (value !== undefined && value !== null) {
+        newRow[key] = isDate(value) ? value.getTime() : value;
       }
     }
-    return dataRow;
+    return newRow;
   });
 }

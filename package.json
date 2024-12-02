@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@devoxa/integresql-client": "^2.1.1",
+    "@golevelup/ts-jest": "^0.6.1",
     "@nestjs/cli": "^10.4.8",
     "@nestjs/schematics": "^10.2.3",
     "@nestjs/testing": "^10.4.12",

@@ -1,11 +1,12 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication } from '@nestjs/common';
+import { HttpStatus, INestApplication, ValidationPipe } from '@nestjs/common';
 import * as request from 'supertest';
 import { TableModule } from './table.module';
 import { setupTestDatabase } from 'test/e2e-database-setup';
 import { PrismaService } from 'src/data-layer';
 import { Prisma, PrismaClient } from '@prisma/client';
 import { applyCustomSerializationToJsTypes } from 'src/custom-js-types-serialization';
+import { DataDictionaryDTO } from './table';
 
 applyCustomSerializationToJsTypes();
 
@@ -24,6 +25,7 @@ describe('TableController (e2e)', () => {
       .compile();
 
     app = moduleFixture.createNestApplication();
+    app.useGlobalPipes(new ValidationPipe({ transform: true }));
     await app.init();
   });
 
@@ -39,17 +41,21 @@ describe('TableController (e2e)', () => {
 
     const response = await request
       .default(app.getHttpServer())
-      .get('/tables/covid?dictionaryColumnNames=code,date&selectColumnNames=total_cases')
-      .expect(200);
+      .get('/tables/covid?timeColumnName=date&dictionaryColumnNames=code,date&selectColumnNames=total_cases');
+    //.expect(200);
 
-    expect(response.body).toEqual({
-      BRA: {
-        [times[0].getTime()]: [{ code: 'BRA', date: times[0].getTime(), total_cases: 5 }],
-        [times[1].getTime()]: [{ code: 'BRA', date: times[1].getTime(), total_cases: 1 }],
-      },
-      CAN: {
-        [times[0].getTime()]: [{ code: 'CAN', date: times[0].getTime(), total_cases: 3 }],
+    expect(response.body).toEqual<DataDictionaryDTO>({
+      mostRecentTimestamp: times[1].getTime(),
+      dataDictionary: {
+        BRA: {
+          [times[0].getTime()]: [{ code: 'BRA', date: times[0].getTime(), total_cases: 5 }],
+          [times[1].getTime()]: [{ code: 'BRA', date: times[1].getTime(), total_cases: 1 }],
+        },
+        CAN: {
+          [times[0].getTime()]: [{ code: 'CAN', date: times[0].getTime(), total_cases: 3 }],
+        },
       },
     });
+    expect(response.status).toEqual(HttpStatus.OK);
   });
 });

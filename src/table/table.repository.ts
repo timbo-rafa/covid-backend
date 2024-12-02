@@ -6,7 +6,7 @@ import { Prisma } from '@prisma/client';
 export class TableRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
-  getTableData<DataType = Record<string, string | number>>(
+  getTableData<DataType = Record<string, string | number | Date | null | undefined>>(
     tableName: string,
     selectColumnNames?: string[],
   ): Prisma.PrismaPromise<DataType[]> {
