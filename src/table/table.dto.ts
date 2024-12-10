@@ -1,6 +1,9 @@
 import { Transform, Type } from 'class-transformer';
-import { ArrayMaxSize, IsArray, IsOptional, IsString, MaxLength, MinLength } from 'class-validator';
-import { each } from 'lodash';
+import { ArrayMaxSize, IsArray, IsEnum, IsOptional, IsString } from 'class-validator';
+
+export enum DownsamplingMethod {
+  LatestMonthly = 'LATEST_MONTHLY'
+}
 
 export class DataQueryGetRequest {
   @IsOptional()
@@ -24,4 +27,9 @@ export class DataQueryGetRequest {
   @IsString()
   timeColumnName: string;
   //countryColumn: string;
+
+  @IsOptional()
+  @IsEnum(DownsamplingMethod)
+  @Transform(({ value }) => String(value).toUpperCase())
+  downsamplingMethod?: DownsamplingMethod;
 }

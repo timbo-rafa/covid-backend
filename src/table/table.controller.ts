@@ -19,15 +19,15 @@ export class TableController {
     //@Query('dictionaryColumnNames', new ParseArrayPipe({ items: String, separator: ',' })) dictionaryColumnNames?: string[],
     //@Query('selectColumnNames', new ParseArrayPipe({ items: String, separator: ',' })) selectColumnNames?: string[],
   ) {
-    const { dictionaryColumnNames, selectColumnNames = [], timeColumnName } = queryParams;
+    const { dictionaryColumnNames, selectColumnNames = [], timeColumnName, downsamplingMethod } = queryParams;
     const datasetConfig: DatasetConfig = { timeColumnName, tableName };
     if (dictionaryColumnNames?.length) {
-      return this.getTableDictionaryByColumn(datasetConfig, { dictionaryColumnNames, selectColumnNames });
+      return this.getTableDictionaryByColumn(datasetConfig, { dictionaryColumnNames, selectColumnNames, downsamplingMethod });
     }
 
     // proper validation missing!
 
-    return this.tableService.getTableData(datasetConfig, selectColumnNames);
+    return this.tableService.getTableData(datasetConfig, { selectColumnNames, downsamplingMethod });
   }
 
   async getTableDictionaryByColumn(datasetConfig: DatasetConfig, queryInput: DataDictionaryQueryInput) {

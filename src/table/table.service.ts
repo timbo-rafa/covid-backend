@@ -1,15 +1,22 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TableRepository } from './table.repository';
 import { convertJsDatesToUnixTimestamp } from '@utils';
-import { DataDictionaryDTO, DataDictionaryQueryInput, DataDTO, DatasetConfig } from './table';
+import { DataDictionaryDTO, DataDictionaryQueryInput, DataDTO, DataQueryInput, DatasetConfig } from './table';
+import { DownsamplingMethod } from './table.dto';
+import { DownsamplingTableRepository } from './downsampling-table.repository';
 
 @Injectable()
 export class TableService {
   private readonly logger = new Logger(TableService.name);
-  constructor(private readonly tableRepository: TableRepository) {}
+  constructor(
+    private readonly tableRepository: TableRepository,
+    private readonly downsamplingTableRepository: DownsamplingTableRepository,
+  ) {}
 
-  async getTableData(datasetConfig: DatasetConfig, selectColumnNames: string[]): Promise<DataDTO> {
-    const data = await this.tableRepository.getTableData(datasetConfig.tableName, selectColumnNames);
+  async getTableData(datasetConfig: DatasetConfig, tableQueryInput: DataQueryInput): Promise<DataDTO> {
+    const data = tableQueryInput.downsamplingMethod
+      ? await this.getDownsampledTableData(datasetConfig, tableQueryInput)
+      : await this.tableRepository.getTableData(datasetConfig.tableName, tableQueryInput.selectColumnNames);
 
     const dataWithUnixTimestamps = convertJsDatesToUnixTimestamp(data);
 
@@ -19,6 +26,18 @@ export class TableService {
       data: dataWithUnixTimestamps,
       mostRecentTimestamp,
     };
+  }
+
+  private async getDownsampledTableData(datasetConfig: DatasetConfig, tableQueryInput: DataQueryInput) {
+    const { downsamplingMethod, selectColumnNames } = tableQueryInput;
+    if (downsamplingMethod === DownsamplingMethod.LatestMonthly) {
+      return this.downsamplingTableRepository.getLatestMonthlyDataPoints(datasetConfig, selectColumnNames);
+    }
+
+    this.logger.warn(
+      `downsampling method ${downsamplingMethod} not implemented, defaulting to ${DownsamplingMethod.LatestMonthly}`,
+    );
+    return this.downsamplingTableRepository.getLatestMonthlyDataPoints(datasetConfig, selectColumnNames);
   }
 
   private calculateMostRecentTimestamp<DataType>(datasetConfig: DatasetConfig, data: DataType[]): number | null {
@@ -39,11 +58,11 @@ export class TableService {
     datasetConfig: DatasetConfig,
     queryInput: DataDictionaryQueryInput,
   ): Promise<DataDictionaryDTO> {
-    const { dictionaryColumnNames, selectColumnNames = [] } = queryInput;
-    const { data, mostRecentTimestamp } = await this.getTableData(
-      datasetConfig,
-      [...dictionaryColumnNames, ...selectColumnNames],
-    );
+    const { dictionaryColumnNames, selectColumnNames = [], downsamplingMethod } = queryInput;
+    const { data, mostRecentTimestamp } = await this.getTableData(datasetConfig, {
+      selectColumnNames: [...dictionaryColumnNames, ...selectColumnNames],
+      downsamplingMethod,
+    });
 
     const [firstGroupBy, secondGroupBy] = dictionaryColumnNames;
 

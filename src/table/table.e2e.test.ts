@@ -30,29 +30,30 @@ describe('TableController (e2e)', () => {
   });
 
   it('get table data in dictionary form with column selection', async () => {
-    const times = [new Date('2020-03-03'), new Date('2020-03-04')];
+    const times = [new Date('2020-03-03'), new Date('2020-03-04'), new Date('2020-04-01')];
     const data: Prisma.CovidCreateManyInput[] = [
-      { code: 'BRA', country: 'Brazil', date: times[0], total_cases: 5 },
-      { code: 'BRA', country: 'Brazil', date: times[1], total_cases: 1 },
-      { code: 'CAN', country: 'Canada', date: times[0], total_cases: 3 },
+      { code: 'BRA', country: 'Brazil', date: times[0], total_cases: 1 },
+      { code: 'BRA', country: 'Brazil', date: times[1], total_cases: 5 },
+      { code: 'BRA', country: 'Brazil', date: times[2], total_cases: 10 },
+      { code: 'CAN', country: 'Canada', date: times[1], total_cases: 3 },
     ];
 
-    await prismaService.covid.createManyAndReturn({ data });
+    await prismaService.covid.createMany({ data });
 
     const response = await request
       .default(app.getHttpServer())
-      .get('/tables/covid?timeColumnName=date&dictionaryColumnNames=code,date&selectColumnNames=total_cases');
+      .get('/tables/covid?timeColumnName=date&dictionaryColumnNames=code,date&selectColumnNames=total_cases&downsamplingMethod=latest_monthly');
     //.expect(200);
 
     expect(response.body).toEqual<DataDictionaryDTO>({
-      mostRecentTimestamp: times[1].getTime(),
+      mostRecentTimestamp: times[2].getTime(),
       dataDictionary: {
         BRA: {
-          [times[0].getTime()]: [{ code: 'BRA', date: times[0].getTime(), total_cases: 5 }],
-          [times[1].getTime()]: [{ code: 'BRA', date: times[1].getTime(), total_cases: 1 }],
+          [times[1].getTime()]: [{ code: 'BRA', date: times[1].getTime(), total_cases: 5 }],
+          [times[2].getTime()]: [{ code: 'BRA', date: times[2].getTime(), total_cases: 10 }],
         },
         CAN: {
-          [times[0].getTime()]: [{ code: 'CAN', date: times[0].getTime(), total_cases: 3 }],
+          [times[1].getTime()]: [{ code: 'CAN', date: times[1].getTime(), total_cases: 3 }],
         },
       },
     });
