@@ -1,9 +1,9 @@
-import { PrismaService } from './prisma.service';
+import { PrismaService } from '../data-layer/database-module/prisma.service';
 import { Injectable } from '@nestjs/common';
 import { validateTableColumnNames, getTableName, getTableColumnNames } from '@prisma/client/sql';
 
 @Injectable()
-export class DatabaseMetadataRepository {
+export class MetadataRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
   async getTableName(tableName: string) {

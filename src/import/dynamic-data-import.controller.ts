@@ -1,12 +1,12 @@
 import { Body, Controller, Post } from '@nestjs/common';
 import { DynamicDataImportService } from './dynamic-data-import.service';
-import { DatabaseMetadataService } from '@data-layer';
+import { MetadataService } from 'src/metadata';
 
 @Controller('/import')
 export class DynamicDataImportController {
   constructor(
     private readonly dynamicDataImportService: DynamicDataImportService,
-    private readonly databaseMetadataService: DatabaseMetadataService,
+    private readonly metadataService: MetadataService,
   ) {}
 
   @Post('/url')

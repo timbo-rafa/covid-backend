@@ -1,22 +1,22 @@
 import { Controller, Get, Param, Query, ValidationPipe } from '@nestjs/common';
 import { TableService } from './table.service';
-import { DatabaseMetadataService } from 'src/data-layer/database-module';
 import { ColumnNotFoundException, TableNotFoundException } from 'src/exceptions';
 import { DataDictionaryQueryInput, DatasetConfig } from './table';
 import { DataQueryGetRequest } from './table.dto';
+import { MetadataService } from 'src/metadata';
 
 @Controller('/tables')
 export class TableController {
   constructor(
     private readonly tableService: TableService,
-    private readonly databaseMetadataService: DatabaseMetadataService,
+    private readonly metadataService: MetadataService,
   ) {}
 
   @Get(':tableName/columns')
   getTableColumns(
     @Param('tableName') tableName: string,
   ) {
-    return this.databaseMetadataService.getColumnNames(tableName);
+    return this.metadataService.getColumnNames(tableName);
   }
 
 
@@ -40,7 +40,7 @@ export class TableController {
 
   async getTableDictionaryByColumn(datasetConfig: DatasetConfig, queryInput: DataDictionaryQueryInput) {
     const { dictionaryColumnNames, selectColumnNames = [] } = queryInput;
-    const validatedMetadata = await this.databaseMetadataService.validateColumnNames(datasetConfig.tableName, [
+    const validatedMetadata = await this.metadataService.validateColumnNames(datasetConfig.tableName, [
       ...dictionaryColumnNames,
       ...selectColumnNames,
     ]);
