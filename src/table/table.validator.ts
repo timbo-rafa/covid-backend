@@ -7,7 +7,7 @@ export class TableValidator {
   constructor(private readonly databaseMetadataService: DatabaseMetadataService) {}
 
   async validateTableAndColumnNames(tableName: string, columnNames: string[]) {
-    const validatedMetadata = await this.databaseMetadataService.getColumnNames(tableName, columnNames);
+    const validatedMetadata = await this.databaseMetadataService.validateColumnNames(tableName, columnNames);
 
     if (!validatedMetadata) {
       throw new TableNotFoundException(`table ${tableName} not found`);

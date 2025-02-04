@@ -12,6 +12,14 @@ export class TableController {
     private readonly databaseMetadataService: DatabaseMetadataService,
   ) {}
 
+  @Get(':tableName/columns')
+  getTableColumns(
+    @Param('tableName') tableName: string,
+  ) {
+    return this.databaseMetadataService.getColumnNames(tableName);
+  }
+
+
   @Get(':tableName')
   getTable(
     @Param('tableName') tableName: string,
@@ -32,7 +40,7 @@ export class TableController {
 
   async getTableDictionaryByColumn(datasetConfig: DatasetConfig, queryInput: DataDictionaryQueryInput) {
     const { dictionaryColumnNames, selectColumnNames = [] } = queryInput;
-    const validatedMetadata = await this.databaseMetadataService.getColumnNames(datasetConfig.tableName, [
+    const validatedMetadata = await this.databaseMetadataService.validateColumnNames(datasetConfig.tableName, [
       ...dictionaryColumnNames,
       ...selectColumnNames,
     ]);
