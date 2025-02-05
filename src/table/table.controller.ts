@@ -13,20 +13,12 @@ export class TableController {
   ) {}
 
   @Get(':tableName/columns')
-  getTableColumns(
-    @Param('tableName') tableName: string,
-  ) {
+  getTableColumns(@Param('tableName') tableName: string) {
     return this.metadataService.getColumnNames(tableName);
   }
 
-
   @Get(':tableName')
-  getTable(
-    @Param('tableName') tableName: string,
-    @Query() queryParams: DataQueryGetRequest,
-    //@Query('dictionaryColumnNames', new ParseArrayPipe({ items: String, separator: ',' })) dictionaryColumnNames?: string[],
-    //@Query('selectColumnNames', new ParseArrayPipe({ items: String, separator: ',' })) selectColumnNames?: string[],
-  ) {
+  getTable(@Param('tableName') tableName: string, @Query() queryParams: DataQueryGetRequest) {
     const { dictionaryColumnNames, selectColumnNames = [], timeColumnName, downsamplingMethod } = queryParams;
     const datasetConfig: DatasetConfig = { timeColumnName, tableName };
     if (dictionaryColumnNames?.length) {

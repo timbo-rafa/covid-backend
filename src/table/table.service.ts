@@ -20,11 +20,12 @@ export class TableService {
 
     const dataWithUnixTimestamps = convertJsDatesToUnixTimestamp(data);
 
-    const mostRecentTimestamp = this.calculateMostRecentTimestamp(datasetConfig, dataWithUnixTimestamps);
+    const {mostRecentTimestamp, timestamps} = this.extractTimestamps(datasetConfig, dataWithUnixTimestamps);
 
     return {
       data: dataWithUnixTimestamps,
       mostRecentTimestamp,
+      timestamps
     };
   }
 
@@ -40,18 +41,26 @@ export class TableService {
     return this.downsamplingTableRepository.getLatestMonthlyDataPoints(datasetConfig, selectColumnNames);
   }
 
-  private calculateMostRecentTimestamp<DataType>(datasetConfig: DatasetConfig, data: DataType[]): number | null {
-    const timestamps = data.map((dataRow) => dataRow[datasetConfig.timeColumnName]);
+  private extractTimestamps<DataType>(datasetConfig: DatasetConfig, data: DataType[]) {
+    const timestamps: number[] = [];
 
-    let mostRecentTime: number = -Infinity;
+    let mostRecentTimestamp: number | null = -Infinity;
 
-    for (const timestamp of timestamps) {
-      if (typeof timestamp === 'number' && timestamp > mostRecentTime) {
-        mostRecentTime = timestamp;
+    for (const dataRow of data) {
+      const timestamp = dataRow[datasetConfig.timeColumnName];
+      if (typeof timestamp !== 'number') {
+        continue;
+      }
+      timestamps.push(timestamp);
+
+      if (timestamp > mostRecentTimestamp) {
+        mostRecentTimestamp = timestamp;
       }
     }
 
-    return mostRecentTime === -Infinity ? null : mostRecentTime;
+    mostRecentTimestamp = mostRecentTimestamp === -Infinity ? null : mostRecentTimestamp;
+
+    return { mostRecentTimestamp, timestamps };
   }
 
   async getTableDataDictionaryByColumn(

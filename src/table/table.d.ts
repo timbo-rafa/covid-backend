@@ -3,6 +3,7 @@ import { DownsamplingMethod } from "./table.dto";
 export type DataDTO = {
   data: Record<string, string | number>[];
   mostRecentTimestamp: number | null;
+  timestamps: number[]
 };
 
 export type DataQueryInput = {
