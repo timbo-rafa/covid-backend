@@ -14,6 +14,10 @@ export class TableService {
     private readonly downsamplingTableRepository: DownsamplingTableRepository,
   ) {}
 
+  async getDistinctColumnValues<ColumnType>(tableName: string, columnName: string) {
+    return this.tableRepository.getDistinctColumnValues<ColumnType>(tableName, columnName);
+  }
+
   async getTableData(datasetConfig: DatasetConfig, tableQueryInput: DataQueryInput): Promise<DataDTO> {
     const entities = tableQueryInput.downsamplingMethod
       ? await this.getDownsampledTableData(datasetConfig, tableQueryInput)

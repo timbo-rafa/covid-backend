@@ -29,7 +29,7 @@ describe('TableController (e2e)', () => {
     await app.init();
   });
 
-  it('get table data in dictionary form with column selection', async () => {
+  it('gets table data in dictionary form with column selection', async () => {
     const times = [new Date('2020-03-03'), new Date('2021-03-04'), new Date('2022-04-01')].sort(
       (d1, d2) => d2.getTime() - d1.getTime(),
     );
@@ -62,6 +62,27 @@ describe('TableController (e2e)', () => {
       },
       timestamps: times.map((date) => date.getTime()),
     });
+    expect(status).toEqual(HttpStatus.OK);
+  });
+
+  it('gets all the values of a column', async () => {
+    const time = new Date('2020-03-03');
+    const data: Prisma.CovidCreateManyInput[] = [
+      { code: 'BRA', country: 'Brazil', date: time, total_cases: 1 },
+      { code: 'BRA', country: 'Brazil', date: time, total_cases: 5 },
+      { code: 'CHN', country: 'China', date: time, total_cases: 10 },
+      { code: 'CAN', country: 'Canada', date: time, total_cases: 3 },
+    ];
+
+    await prismaService.covid.createMany({ data });
+
+    const { body, status } = await request
+      .default(app.getHttpServer())
+      .get(
+        '/tables/covid/columns/code',
+      );
+
+    expect(new Set(body)).toEqual(new Set(data.map(row => row.code)));
     expect(status).toEqual(HttpStatus.OK);
   });
 });

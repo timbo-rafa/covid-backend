@@ -14,7 +14,8 @@ export class TableValidator {
     }
 
     if (validatedMetadata.columnNames.length !== columnNames.length) {
-      throw new ColumnNotFoundException(`Not all selected columns ${columnNames} were found`);
+      const missingColumnNames = columnNames.filter((columnName) => !validatedMetadata.columnNames.includes(columnName));
+      throw new ColumnNotFoundException(`Columns ${missingColumnNames.join()} were not found`);
     }
 
     return validatedMetadata;

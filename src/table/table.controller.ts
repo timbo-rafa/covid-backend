@@ -1,16 +1,24 @@
-import { Controller, Get, Param, Query, ValidationPipe } from '@nestjs/common';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { TableService } from './table.service';
-import { ColumnNotFoundException, TableNotFoundException } from 'src/exceptions';
 import { DataDictionaryQueryInput, DatasetConfig } from './table';
 import { DataQueryGetRequest } from './table.dto';
 import { MetadataService } from 'src/metadata';
+import { TableValidator } from './table.validator';
 
 @Controller('/tables')
 export class TableController {
   constructor(
     private readonly tableService: TableService,
     private readonly metadataService: MetadataService,
+    private readonly tableValidator: TableValidator,
   ) {}
+
+  @Get(':tableName/columns/:columnName')
+  async getColumnValues<ColumnType>(@Param('tableName') tableName: string, @Param('columnName') columnName: string) {
+    await this.tableValidator.validateTableAndColumnNames(tableName, [columnName]);
+
+    return this.tableService.getDistinctColumnValues<ColumnType>(tableName, columnName);
+  }
 
   @Get(':tableName/columns')
   getTableColumns(@Param('tableName') tableName: string) {
@@ -32,20 +40,8 @@ export class TableController {
 
   async getTableDictionaryByColumn(datasetConfig: DatasetConfig, queryInput: DataDictionaryQueryInput) {
     const { dictionaryColumnNames, selectColumnNames = [] } = queryInput;
-    const validatedMetadata = await this.metadataService.validateColumnNames(datasetConfig.tableName, [
-      ...dictionaryColumnNames,
-      ...selectColumnNames,
-    ]);
 
-    if (!validatedMetadata) {
-      throw new TableNotFoundException(`table ${datasetConfig.tableName} not found`);
-    }
-
-    const specifiedColumnNames = [...dictionaryColumnNames, ...selectColumnNames];
-    if (specifiedColumnNames.length !== validatedMetadata.columnNames.length) {
-      const missingColumnNames = specifiedColumnNames.filter((columnName) => !validatedMetadata.columnNames.includes(columnName));
-      throw new ColumnNotFoundException(`Columns ${missingColumnNames.join()} were not found`);
-    }
+    await this.tableValidator.validateTableAndColumnNames(datasetConfig.tableName, [...dictionaryColumnNames, ...selectColumnNames]);
 
     const dict = await this.tableService.getTableDataDictionaryByColumn(datasetConfig, queryInput);
 

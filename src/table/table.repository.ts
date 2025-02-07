@@ -7,11 +7,18 @@ import { DatasetConfig } from './table';
 export class TableRepository {
   constructor(private readonly prismaService: PrismaService) {}
 
+  async getDistinctColumnValues<ColumnType>(tableName: string, columnName: string) {
+    const sql = `SELECT ARRAY_AGG(DISTINCT "${columnName}") AS "arrayAgg" FROM ${tableName} WHERE "${columnName}" IS NOT NULL`;
+    const columnValues =  await this.prismaService.$queryRawUnsafe<[{arrayAgg: ColumnType[]}]>(sql);
+
+    return columnValues[0]?.arrayAgg || []
+  }
+
   getTableData(
     datasetConfig: DatasetConfig,
     selectColumnNames?: string[],
   ): Prisma.PrismaPromise<Record<string, string | number | Date | null | undefined>[]> {
-    const {tableName, timeColumnName} = datasetConfig
+    const { tableName, timeColumnName } = datasetConfig;
     const selectColumns = selectColumnNames?.join() || '*';
 
     const where = selectColumnNames
