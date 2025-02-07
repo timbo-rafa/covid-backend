@@ -30,7 +30,9 @@ describe('TableController (e2e)', () => {
   });
 
   it('get table data in dictionary form with column selection', async () => {
-    const times = [new Date('2020-03-03'), new Date('2020-03-04'), new Date('2020-04-01')];
+    const times = [new Date('2020-03-03'), new Date('2021-03-04'), new Date('2022-04-01')].sort(
+      (d1, d2) => d2.getTime() - d1.getTime(),
+    );
     const data: Prisma.CovidCreateManyInput[] = [
       { code: 'BRA', country: 'Brazil', date: times[0], total_cases: 1 },
       { code: 'BRA', country: 'Brazil', date: times[1], total_cases: 5 },
@@ -40,15 +42,17 @@ describe('TableController (e2e)', () => {
 
     await prismaService.covid.createMany({ data });
 
-    const response = await request
+    const { body, status } = await request
       .default(app.getHttpServer())
-      .get('/tables/covid?timeColumnName=date&dictionaryColumnNames=code,date&selectColumnNames=total_cases&downsamplingMethod=latest_monthly');
-    //.expect(200);
+      .get(
+        '/tables/covid?timeColumnName=date&dictionaryColumnNames=code,date&selectColumnNames=total_cases&downsamplingMethod=latest_monthly',
+      );
 
-    expect(response.body).toEqual<DataDictionaryDTO>({
-      mostRecentTimestamp: times[2].getTime(),
+    expect(body).toEqual<DataDictionaryDTO>({
+      mostRecentTimestamp: times[0].getTime(),
       dataDictionary: {
         BRA: {
+          [times[0].getTime()]: [{ code: 'BRA', date: times[0].getTime(), total_cases: 1 }],
           [times[1].getTime()]: [{ code: 'BRA', date: times[1].getTime(), total_cases: 5 }],
           [times[2].getTime()]: [{ code: 'BRA', date: times[2].getTime(), total_cases: 10 }],
         },
@@ -56,7 +60,8 @@ describe('TableController (e2e)', () => {
           [times[1].getTime()]: [{ code: 'CAN', date: times[1].getTime(), total_cases: 3 }],
         },
       },
+      timestamps: times.map((date) => date.getTime()),
     });
-    expect(response.status).toEqual(HttpStatus.OK);
+    expect(status).toEqual(HttpStatus.OK);
   });
 });

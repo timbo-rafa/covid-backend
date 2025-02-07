@@ -15,6 +15,7 @@ type DataDictionary = Record<string | number, string | number | DataDictionary>;
 export type DataDictionaryDTO = {
   dataDictionary: DataDictionary;
   mostRecentTimestamp: number | null;
+  timestamps: number[];
 };
 
 export type DataDictionaryQueryInput = {

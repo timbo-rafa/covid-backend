@@ -1,9 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { TableRepository } from './table.repository';
-import { convertJsDatesToUnixTimestamp } from '@utils';
 import { DataDictionaryDTO, DataDictionaryQueryInput, DataDTO, DataQueryInput, DatasetConfig } from './table';
 import { DownsamplingMethod } from './table.dto';
 import { DownsamplingTableRepository } from './downsampling-table.repository';
+import { isDefined } from 'class-validator';
+import { filterOutNullOrUndefinedColumns, mapJsDateToUnixTimestamp } from 'src/utils/row-transforms';
 
 @Injectable()
 export class TableService {
@@ -14,18 +15,18 @@ export class TableService {
   ) {}
 
   async getTableData(datasetConfig: DatasetConfig, tableQueryInput: DataQueryInput): Promise<DataDTO> {
-    const data = tableQueryInput.downsamplingMethod
+    const entities = tableQueryInput.downsamplingMethod
       ? await this.getDownsampledTableData(datasetConfig, tableQueryInput)
-      : await this.tableRepository.getTableData(datasetConfig.tableName, tableQueryInput.selectColumnNames);
+      : await this.tableRepository.getTableData(datasetConfig, tableQueryInput.selectColumnNames);
 
-    const dataWithUnixTimestamps = convertJsDatesToUnixTimestamp(data);
+    const transformedData = entities.map(filterOutNullOrUndefinedColumns).map(mapJsDateToUnixTimestamp);
 
-    const {mostRecentTimestamp, timestamps} = this.extractTimestamps(datasetConfig, dataWithUnixTimestamps);
+    const { mostRecentTimestamp, timestamps } = this.reduceToTimestamps(datasetConfig, transformedData);
 
     return {
-      data: dataWithUnixTimestamps,
+      data: transformedData,
       mostRecentTimestamp,
-      timestamps
+      timestamps,
     };
   }
 
@@ -41,24 +42,12 @@ export class TableService {
     return this.downsamplingTableRepository.getLatestMonthlyDataPoints(datasetConfig, selectColumnNames);
   }
 
-  private extractTimestamps<DataType>(datasetConfig: DatasetConfig, data: DataType[]) {
-    const timestamps: number[] = [];
+  private reduceToTimestamps<DataType>(datasetConfig: DatasetConfig, data: DataType[]) {
+    const timestamps = Array.from(
+      new Set(data.map((row) => row[datasetConfig.timeColumnName]).filter((timestamp) => typeof timestamp === 'number')),
+    ).sort((d1, d2) => d2 - d1);
 
-    let mostRecentTimestamp: number | null = -Infinity;
-
-    for (const dataRow of data) {
-      const timestamp = dataRow[datasetConfig.timeColumnName];
-      if (typeof timestamp !== 'number') {
-        continue;
-      }
-      timestamps.push(timestamp);
-
-      if (timestamp > mostRecentTimestamp) {
-        mostRecentTimestamp = timestamp;
-      }
-    }
-
-    mostRecentTimestamp = mostRecentTimestamp === -Infinity ? null : mostRecentTimestamp;
+    const mostRecentTimestamp = timestamps[0];
 
     return { mostRecentTimestamp, timestamps };
   }
@@ -68,7 +57,7 @@ export class TableService {
     queryInput: DataDictionaryQueryInput,
   ): Promise<DataDictionaryDTO> {
     const { dictionaryColumnNames, selectColumnNames = [], downsamplingMethod } = queryInput;
-    const { data, mostRecentTimestamp } = await this.getTableData(datasetConfig, {
+    const { data, mostRecentTimestamp, timestamps } = await this.getTableData(datasetConfig, {
       selectColumnNames: [...dictionaryColumnNames, ...selectColumnNames],
       downsamplingMethod,
     });
@@ -77,32 +66,34 @@ export class TableService {
 
     const tableDictionaryByColumn = Object.groupBy(data, (dataRow) => dataRow[firstGroupBy]);
 
-    if (secondGroupBy) {
-      const tableDictionaryByTwoColumns: Partial<
-        Record<string | number, Partial<Record<string | number, Record<string | number, string | number>[]>>>
-      > = {};
-      for (const firstKey in tableDictionaryByColumn) {
-        const dataInFirstKey = tableDictionaryByColumn[firstKey];
-
-        tableDictionaryByTwoColumns[firstKey] = {};
-        if (!dataInFirstKey) {
-          continue;
-        }
-
-        const dataInFirstKeyGroupedBySecondKey = Object.groupBy(dataInFirstKey, (dataRow) => dataRow[secondGroupBy]);
-
-        tableDictionaryByTwoColumns[firstKey] = dataInFirstKeyGroupedBySecondKey;
-      }
-
+    if (!secondGroupBy) {
       return {
-        dataDictionary: tableDictionaryByTwoColumns,
+        dataDictionary: tableDictionaryByColumn,
         mostRecentTimestamp,
+        timestamps,
       };
     }
 
+    const tableDictionaryByTwoColumns: Partial<
+      Record<string | number, Partial<Record<string | number, Record<string | number, string | number>[]>>>
+    > = {};
+    for (const firstKey in tableDictionaryByColumn) {
+      const dataInFirstKey = tableDictionaryByColumn[firstKey];
+
+      tableDictionaryByTwoColumns[firstKey] = {};
+      if (!dataInFirstKey) {
+        continue;
+      }
+
+      const dataInFirstKeyGroupedBySecondKey = Object.groupBy(dataInFirstKey, (dataRow) => dataRow[secondGroupBy]);
+
+      tableDictionaryByTwoColumns[firstKey] = dataInFirstKeyGroupedBySecondKey;
+    }
+
     return {
-      dataDictionary: tableDictionaryByColumn,
+      dataDictionary: tableDictionaryByTwoColumns,
       mostRecentTimestamp,
+      timestamps,
     };
   }
 }
