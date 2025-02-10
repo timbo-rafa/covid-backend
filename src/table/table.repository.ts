@@ -28,7 +28,7 @@ export class TableRepository {
     const sql = `
       SELECT ${selectColumns} FROM ${tableName}
       ${where}
-      ORDER BY "${timeColumnName}" DESC
+      ORDER BY "${timeColumnName}" ASC
       `;
     return this.prismaService.$queryRawUnsafe(sql);
   }

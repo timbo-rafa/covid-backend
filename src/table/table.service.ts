@@ -49,7 +49,7 @@ export class TableService {
   private reduceToTimestamps<DataType>(datasetConfig: DatasetConfig, data: DataType[]) {
     const timestamps = Array.from(
       new Set(data.map((row) => row[datasetConfig.timeColumnName]).filter((timestamp) => typeof timestamp === 'number')),
-    ).sort((d1, d2) => d2 - d1);
+    ).sort((d1, d2) => d1 - d2);
 
     const mostRecentTimestamp = timestamps[0];
 

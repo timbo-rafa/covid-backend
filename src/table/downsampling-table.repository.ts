@@ -23,7 +23,7 @@ export class DownsamplingTableRepository {
         ${selectColumns}
       FROM public.${tableName}
       ${where}
-      ORDER BY code, EXTRACT(YEAR from "${timeColumnName}") DESC, EXTRACT(MONTH from "${timeColumnName}"), ${timeColumnName} DESC
+      ORDER BY code, EXTRACT(YEAR from "${timeColumnName}") ASC, EXTRACT(MONTH from "${timeColumnName}"), ${timeColumnName} ASC
       `;
     return this.prismaService.$queryRawUnsafe(sql);
   }
